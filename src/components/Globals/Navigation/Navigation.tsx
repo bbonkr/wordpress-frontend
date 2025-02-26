@@ -7,10 +7,11 @@ import { MenuItem, RootQueryToMenuItemConnection } from "@/gql/graphql";
 import { fetchGraphQL } from "@/utils/fetchGraphQL";
 import gql from "graphql-tag";
 
+// PRIMARY_MENU
 async function getData() {
   const menuQuery = gql`
     query MenuQuery {
-      menuItems(where: { location: PRIMARY_MENU }) {
+      menuItems(where: { location: PRIMARY }) {
         nodes {
           uri
           target

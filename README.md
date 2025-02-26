@@ -1,3 +1,7 @@
+# Please read follow page first
+
+- https://github.com/vercel/next.js/tree/canary/examples/cms-wordpress
+
 # A Feature Rich App Router WordPress Example
 
 This is an example on how you can build a Next.js 14 project (with App Router), using [WordPress](https://wordpress.org) as the data source.

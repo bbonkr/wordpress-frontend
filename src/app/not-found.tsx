@@ -8,12 +8,12 @@ import { ContentNode, Page } from "@/gql/graphql";
 import { PageQuery } from "@/components/Templates/Page/PageQuery";
 import { SeoQuery } from "@/queries/general/SeoQuery";
 
-const notFoundPageWordPressId = 501;
+const notFoundPageWordPressId = 10580;
 
 export async function generateMetadata(): Promise<Metadata> {
   const { contentNode } = await fetchGraphQL<{ contentNode: ContentNode }>(
     print(SeoQuery),
-    { slug: notFoundPageWordPressId, idType: "DATABASE_ID" },
+    { slug: notFoundPageWordPressId, idType: "DATABASE_ID" }
   );
 
   const metadata = setSeoData({ seo: contentNode.seo });

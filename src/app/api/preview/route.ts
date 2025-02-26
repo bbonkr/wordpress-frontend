@@ -34,12 +34,14 @@ export async function GET(request: Request) {
 `;
 
   const { login } = await fetchGraphQL<{ login: LoginPayload }>(
-    print(mutation),
+    print(mutation)
   );
 
   const authToken = login.authToken;
 
-  draftMode().enable();
+  // draftMode().enable();
+  const draftModeValue = await draftMode();
+  draftModeValue.enable();
 
   const query = gql`
     query GetContentNode($id: ID!) {
@@ -56,7 +58,7 @@ export async function GET(request: Request) {
     {
       id,
     },
-    { Authorization: `Bearer ${authToken}` },
+    { Authorization: `Bearer ${authToken}` }
   );
 
   if (!contentNode) {
@@ -68,7 +70,7 @@ export async function GET(request: Request) {
       contentNode.status === "draft"
         ? `/preview/${contentNode.databaseId}`
         : contentNode.uri
-    }`,
+    }`
   );
 
   response.headers.set("Set-Cookie", `wp_jwt=${authToken}; path=/;`);

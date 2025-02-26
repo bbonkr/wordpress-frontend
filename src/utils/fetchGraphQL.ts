@@ -3,14 +3,15 @@ import { draftMode, cookies } from "next/headers";
 export async function fetchGraphQL<T = any>(
   query: string,
   variables?: { [key: string]: any },
-  headers?: { [key: string]: string },
+  headers?: { [key: string]: string }
 ): Promise<T> {
-  const { isEnabled: preview } = draftMode();
+  const { isEnabled: preview } = await draftMode();
 
   try {
     let authHeader = "";
     if (preview) {
-      const auth = cookies().get("wp_jwt")?.value;
+      const cookiesValue = await cookies();
+      const auth = cookiesValue.get("wp_jwt")?.value;
       if (auth) {
         authHeader = `Bearer ${auth}`;
       }
@@ -24,22 +25,21 @@ export async function fetchGraphQL<T = any>(
       },
     });
 
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_WORDPRESS_API_URL}/graphql`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(authHeader && { Authorization: authHeader }),
-          ...headers,
-        },
-        body,
-        cache: preview ? "no-cache" : "default",
-        next: {
-          tags: ["wordpress"],
-        },
+    const graphqlEndpoint = `${process.env.NEXT_PUBLIC_WORDPRESS_API_URL}/graphql`;
+
+    const response = await fetch(graphqlEndpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(authHeader && { Authorization: authHeader }),
+        ...headers,
       },
-    );
+      body,
+      cache: preview ? "no-cache" : "default",
+      next: {
+        tags: ["wordpress"],
+      },
+    });
 
     if (!response.ok) {
       console.error("Response Status:", response);

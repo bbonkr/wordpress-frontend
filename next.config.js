@@ -10,6 +10,12 @@ const nextConfig = {
       },
     ],
   },
+  client: {
+    service: {
+      name: "WordPress",
+      localSchemaFile: "./src/gql/schema.gql",
+    },
+  },
 };
 
 module.exports = nextConfig;
