@@ -14,10 +14,10 @@ import { SeoQuery } from "@/queries/general/SeoQuery";
 import PostListTemplate from "@/components/Templates/PostList/PostListTemplate";
 
 type Props = {
-  params: {
+  params: Promise<{
     slug: string;
-  };
-  searchParams?: { [key: string]: string | string[] | undefined };
+  }>;
+  searchParams?: Promise <{ [key: string]: string | string[] | undefined }>;
 };
 
 export async function generateMetadata({

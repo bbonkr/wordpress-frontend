@@ -5,6 +5,7 @@ import "@/app/globals.css";
 
 import Navigation from "@/components/Globals/Navigation/Navigation";
 import { PreviewNotice } from "@/components/Globals/PreviewNotice/PreviewNotice";
+import Theme from "@/components/Globals/ThemeProvider/theme-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,13 +17,15 @@ export default async function RootLayout({
   const { isEnabled } = await draftMode();
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <div className="flex flex-col min-h-screen">
-          {isEnabled && <PreviewNotice />}
-          <Navigation />
-          {children}
-        </div>
+        <Theme>
+          <div className="flex flex-col min-h-screen">
+            {isEnabled && <PreviewNotice />}
+            <Navigation />
+            {children}
+          </div>
+        </Theme>
       </body>
     </html>
   );

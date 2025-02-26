@@ -6,6 +6,7 @@ import styles from "./Navigation.module.css";
 import { MenuItem, RootQueryToMenuItemConnection } from "@/gql/graphql";
 import { fetchGraphQL } from "@/utils/fetchGraphQL";
 import gql from "graphql-tag";
+import ThemeToggle from "@/components/Globals/ThemeProvider/theme-toggle";
 
 // PRIMARY_MENU
 async function getData() {
@@ -56,6 +57,8 @@ export default async function Navigation() {
           </Link>
         );
       })}
+
+      <ThemeToggle />
     </nav>
   );
 }
