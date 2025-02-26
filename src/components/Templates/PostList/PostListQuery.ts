@@ -1,8 +1,20 @@
 import gql from "graphql-tag";
 
 export const PostListQuery = gql`
-  query PostList {
-    posts {
+  query PostList(
+    $after: String
+    $first: Int
+    $before: String
+    $last: Int
+    $s: String
+  ) {
+    posts(
+      where: { search: $s }
+      after: $after
+      first: $first
+      before: $before
+      last: $last
+    ) {
       pageInfo {
         endCursor
         hasNextPage

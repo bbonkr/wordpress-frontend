@@ -14,20 +14,30 @@ import { SeoQuery } from "@/queries/general/SeoQuery";
 import PostListTemplate from "@/components/Templates/PostList/PostListTemplate";
 
 type Props = {
-  params: { slug: string };
+  params: Promise<{
+    slug: string;
+  }>;
+  searchParams?: Promise <{ [key: string]: string | string[] | undefined }>;
 };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const slug = nextSlugToWpSlug(params.slug);
+export async function generateMetadata({
+  params,
+  searchParams,
+}: Props): Promise<Metadata> {
+  const paramValue = await params;
+  const searchParamsValue = await searchParams;
+
+  const slug = nextSlugToWpSlug(paramValue.slug);
 
   const slugs = slug.split("/").filter((x) => Boolean(x));
+
   if (slugs && slugs.length > 0) {
-    const isPreview = slug.includes("preview");
+    const isPreview = slugs.includes("preview");
 
     const { contentNode } = await fetchGraphQL<{ contentNode: ContentNode }>(
       print(SeoQuery),
       {
-        slug: isPreview ? slug.split("preview/")[1] : slug,
+        slug: isPreview ? slugs[1] : decodeURIComponent(slugs[0]),
         idType: isPreview ? "DATABASE_ID" : "URI",
       }
     );
@@ -53,16 +63,18 @@ export function generateStaticParams() {
   return [];
 }
 
-export default async function Page({ params }: Props) {
-  const slug = nextSlugToWpSlug(params.slug);
+export default async function Page({ params, searchParams }: Readonly<Props>) {
+  const paramValue = await params;
+  const slug = nextSlugToWpSlug(paramValue.slug);
   const slugs = slug.split("/").filter((x) => Boolean(x));
+  const searchParamsValue = await searchParams;
 
   if (slugs && slugs.length > 0) {
-    const isPreview = slug.includes("preview");
+    const isPreview = slugs.includes("preview");
     const { contentNode } = await fetchGraphQL<{ contentNode: ContentNode }>(
       print(ContentInfoQuery),
       {
-        slug: isPreview ? slug.split("preview/")[1] : slug,
+        slug: isPreview ? slugs[1] : decodeURIComponent(slugs[0]),
         idType: isPreview ? "DATABASE_ID" : "URI",
       }
     );
@@ -78,7 +90,6 @@ export default async function Page({ params }: Props) {
         return <p>{contentNode.contentTypeName} not implemented</p>;
     }
   } else {
-    console.info("PostListTemplate");
-    return <PostListTemplate />;
+    return <PostListTemplate {...searchParamsValue} />;
   }
 }

@@ -1,6 +1,6 @@
 import { print } from "graphql/language/printer";
 
-import { ContentNode, LoginPayload } from "@/gql/graphql";
+import { ContentNode } from "@/gql/graphql";
 import { fetchGraphQL } from "@/utils/fetchGraphQL";
 import { draftMode } from "next/headers";
 import { NextResponse } from "next/server";
@@ -17,27 +17,27 @@ export async function GET(request: Request) {
     return new Response("Invalid token", { status: 401 });
   }
 
-  const mutation = gql`
-  mutation LoginUser {
-    login( input: {
-      clientMutationId: "uniqueId",
-      username: "${process.env.WP_USER}",
-      password: "${process.env.WP_APP_PASS}"
-    } ) {
-      authToken
-      user {
-        id
-        name
-      }
-    }
-  }
-`;
+  //   const mutation = gql`
+  //   mutation LoginUser {
+  //     login( input: {
+  //       clientMutationId: "uniqueId",
+  //       username: "${process.env.WP_USER}",
+  //       password: "${process.env.WP_APP_PASS}"
+  //     } ) {
+  //       authToken
+  //       user {
+  //         id
+  //         name
+  //       }
+  //     }
+  //   }
+  // `;
 
-  const { login } = await fetchGraphQL<{ login: LoginPayload }>(
-    print(mutation)
-  );
+  // const { login } = await fetchGraphQL<{ login: LoginPayload }>(
+  //   print(mutation)
+  // );
 
-  const authToken = login.authToken;
+  // const authToken = login.authToken;
 
   // draftMode().enable();
   const draftModeValue = await draftMode();
@@ -53,12 +53,22 @@ export async function GET(request: Request) {
     }
   `;
 
+  const wpUser = process.env.WP_USER;
+  const wpAppPass = process.env.WP_APP_PASS;
+  let httpHeader = {};
+  let authToken = "";
+  if (wpUser && wpAppPass) {
+    authToken = Buffer.from(`${wpUser}:${wpAppPass}`).toString("base64");
+    httpHeader = { Authorization: `Basic ${authToken}` };
+  }
+
   const { contentNode } = await fetchGraphQL<{ contentNode: ContentNode }>(
     print(query),
     {
       id,
     },
-    { Authorization: `Bearer ${authToken}` }
+    // { Authorization: `Bearer ${authToken}` }
+    { ...httpHeader }
   );
 
   if (!contentNode) {
