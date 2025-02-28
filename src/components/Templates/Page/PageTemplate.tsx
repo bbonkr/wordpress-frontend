@@ -14,8 +14,14 @@ export default async function PageTemplate({ node }: TemplateProps) {
   });
 
   return (
-    <div className={styles.post}>
-      <div dangerouslySetInnerHTML={{ __html: page?.content || "" }} />;
+    <div
+      className={`w-full px-3 md:px-10 flex flex-col flex-1 justify-between ${styles.post}`}
+    >
+      <div
+        className={`${styles.body}`}
+        dangerouslySetInnerHTML={{ __html: page?.content || "" }}
+      />
+      ;
     </div>
   );
 }

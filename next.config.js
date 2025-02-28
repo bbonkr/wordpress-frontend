@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   trailingSlash: true,
-  output: "standalone",
   images: {
     remotePatterns: [
       {
@@ -9,13 +8,12 @@ const nextConfig = {
         hostname: process.env.NEXT_PUBLIC_WORDPRESS_API_HOSTNAME,
         port: "",
       },
+      {
+        protocol: "https",
+        hostname: process.env.NEXT_PUBLIC_WORDPRESS_API_HOSTNAME,
+        port: "443",
+      },
     ],
-  },
-  client: {
-    service: {
-      name: "WordPress",
-      localSchemaFile: "./src/gql/schema.gql",
-    },
   },
 };
 

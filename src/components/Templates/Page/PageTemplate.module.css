@@ -13,3 +13,8 @@
   color: #666;
   margin: 30px 0;
 }
+
+.body > * {
+  word-wrap: break-word;
+  text-wrap: auto;
+}
