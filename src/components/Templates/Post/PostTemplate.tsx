@@ -16,11 +16,16 @@ export default async function PostTemplate({ node }: TemplateProps) {
   });
 
   return (
-    <div className={styles.post}>
+    <div
+      className={`w-full px-3 md:px-10 flex flex-col flex-1 justify-between ${styles.post}`}
+    >
       <h1 className={styles.title}>{post.title}</h1>
       <div className={styles.author}>By {post.author?.node.name}</div>
 
-      <div dangerouslySetInnerHTML={{ __html: post.content || "" }} />
+      <div
+        className={`whitespace-break-spaces ${styles.body}`}
+        dangerouslySetInnerHTML={{ __html: post.content || "" }}
+      />
     </div>
   );
 }
