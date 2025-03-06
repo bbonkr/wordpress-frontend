@@ -11,7 +11,6 @@ import PageTemplate from "@/components/Templates/Page/PageTemplate";
 import { nextSlugToWpSlug } from "@/utils/nextSlugToWpSlug";
 import PostTemplate from "@/components/Templates/Post/PostTemplate";
 import { SeoQuery } from "@/queries/general/SeoQuery";
-import PostListTemplate from "@/components/Templates/PostList/PostListTemplate";
 
 type Props = {
   params: Promise<{
