@@ -9,6 +9,27 @@ export const PostQuery = gql`
       author {
         node {
           name
+          nicename
+          nickname
+          avatar {
+            height
+            width
+            url
+            size
+            extraAttr
+          }
+        }
+      }
+      tags {
+        nodes {
+          name
+          slug
+        }
+      }
+      categories {
+        nodes {
+          name
+          slug
         }
       }
     }

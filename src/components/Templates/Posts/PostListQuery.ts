@@ -9,7 +9,7 @@ export const PostListQuery = gql`
     $s: String
   ) {
     posts(
-      where: { search: $s }
+      where: { search: $s, status: PUBLISH }
       after: $after
       first: $first
       before: $before

@@ -1,14 +1,14 @@
 import gql from "graphql-tag";
 
-export const CategoryPostsQuery = gql`
-  query postsOfCategoryQuery(
+export const TagPostsQuery = gql`
+  query tagPostsQuery(
     $id: ID = ""
-    $after: String = ""
-    $before: String = ""
+    $after: String
+    $before: String
     $first: Int
     $last: Int
   ) {
-    category(id: $id, idType: SLUG) {
+    tag(id: $id, idType: SLUG) {
       name
       slug
       posts(
