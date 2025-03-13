@@ -1,17 +1,17 @@
 import { print } from "graphql/language/printer";
 
-import { Category } from "@/gql/graphql";
+import { Tag } from "@/gql/graphql";
 import { fetchGraphQL } from "@/utils/fetchGraphQL";
 
-import { CategoryPostsQuery } from "./CategoryPostsQuery";
+import { TagPostsQuery } from "./TagPostsQuery";
 import Link from "next/link";
 import ListOfPostTemplate from "../ListOfPosts/ListOfPostTemplate";
 import PaginationTemplate from "../Pagination/PaginationTemplate";
 import constants from "@/constants";
-import styles from "./CategoryPostsTemplate.module.css";
+import styles from "./TagPostsTemplate.module.css";
 
-interface PostListTemplate {
-  categorySlug: string;
+interface TagPostsTemplate {
+  tagSlug: string;
   after?: string;
   before?: string;
   first?: string;
@@ -19,21 +19,21 @@ interface PostListTemplate {
   s?: string;
 }
 
-export default async function CategoryPostsTemplate({
-  categorySlug,
+export default async function TagPostsTemplate({
+  tagSlug,
   after,
   before,
   first,
   last,
   s,
-}: Readonly<PostListTemplate>) {
+}: Readonly<TagPostsTemplate>) {
   const firstValue =
     !after && !before && !last ? `${constants.pagination.first}` : first;
 
-  const { category } = await fetchGraphQL<{
-    category: Category;
-  }>(print(CategoryPostsQuery), {
-    id: categorySlug,
+  const { tag } = await fetchGraphQL<{
+    tag: Tag;
+  }>(print(TagPostsQuery), {
+    id: tagSlug,
     after: after,
     before: before,
     first: firstValue ? parseInt(firstValue, 10) : undefined,
@@ -46,19 +46,19 @@ export default async function CategoryPostsTemplate({
       className={`w-full px-3 md:px-10 flex flex-col flex-1 justify-between ${styles.container}`}
     >
       <h1 className={styles.title}>
-        <Link href={`/categories/${category.slug}`}>
-          Posts in the <strong>{category.name}</strong> category
+        <Link href={`/tags/${tag.slug}`}>
+          Posts with the <strong> {tag.name}</strong> tag
         </Link>
       </h1>
 
       <hr className="my-3" />
 
-      {(category?.posts?.nodes?.length ?? 0) > 0 ? (
-        <ListOfPostTemplate route="/" posts={category?.posts?.nodes} />
+      {(tag?.posts?.nodes?.length ?? 0) > 0 ? (
+        <ListOfPostTemplate route="/" posts={tag?.posts?.nodes} />
       ) : (
         <div className="flex-1 flex flex-col justify-center items-center ">
           <div className="flex flex-col gap-3 w-full">
-            <p>There is no post in this category.</p>
+            <p>There is no post in this tag.</p>
             <p>You can find the article you want in the list.</p>
             <p>
               <Link href="/">Navigate to post list page</Link>
@@ -69,8 +69,8 @@ export default async function CategoryPostsTemplate({
 
       <hr />
       <PaginationTemplate
-        route={`/categories/${categorySlug}/`}
-        pageInfo={category?.posts?.pageInfo}
+        route={`/tags/${tagSlug}/`}
+        pageInfo={tag?.posts?.pageInfo}
       />
     </div>
   );

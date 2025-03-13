@@ -1,3 +1,18 @@
+/* @import url(https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css);
+@import url(https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autolinker/prism-autolinker.min.css);
+@import url(https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/command-line/prism-command-line.min.css);
+@import url(https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/diff-highlight/prism-diff-highlight.min.css);
+@import url(https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/inline-color/prism-inline-color.min.css);
+@import url(https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-highlight/prism-line-highlight.min.css);
+@import url(https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css);
+@import url(https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/match-braces/prism-match-braces.min.css);
+@import url(https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/previewers/prism-previewers.min.css);
+@import url(https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/show-invisibles/prism-show-invisibles.min.css);
+@import url(https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.css);
+@import url(https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/treeview/prism-treeview.min.css);
+@import url(https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/unescaped-markup/prism-unescaped-markup.min.css);
+@import url(https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/wpd/prism-wpd.min.css); */
+
 .post {
   max-width: 1000px;
   margin: 0 auto;
