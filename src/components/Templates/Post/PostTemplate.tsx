@@ -18,14 +18,6 @@ export default async function PostTemplate({ node }: TemplateProps) {
     id: node.databaseId,
   });
 
-  const cdeBlockRegex = new RegExp("<pre>.*<code.*class=.*language", "ig");
-  let content = post.content ?? "";
-  const hasCodeBlock = cdeBlockRegex.test(content);
-
-  console.info("hasCodeBlock", hasCodeBlock);
-  if (hasCodeBlock) {
-  }
-
   return (
     <div
       className={`w-full px-3 md:px-10 flex flex-col flex-1 justify-between ${styles.post}`}
@@ -59,13 +51,13 @@ export default async function PostTemplate({ node }: TemplateProps) {
         fallback={
           <div
             className={`whitespace-break-spaces ${styles.body}`}
-            dangerouslySetInnerHTML={{ __html: content }}
+            dangerouslySetInnerHTML={{ __html: post.content ?? "" }}
           />
         }
       >
         <PostContent
           classNames={`whitespace-break-spaces ${styles.body}`}
-          content={content}
+          content={post.content ?? ""}
         />
       </Suspense>
 

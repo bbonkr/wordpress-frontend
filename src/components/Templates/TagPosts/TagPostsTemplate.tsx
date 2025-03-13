@@ -46,7 +46,7 @@ export default async function TagPostsTemplate({
       className={`w-full px-3 md:px-10 flex flex-col flex-1 justify-between ${styles.container}`}
     >
       <h1 className={styles.title}>
-        <Link href={`/categories/${tag.slug}`}>
+        <Link href={`/tags/${tag.slug}`}>
           Posts with the <strong> {tag.name}</strong> tag
         </Link>
       </h1>

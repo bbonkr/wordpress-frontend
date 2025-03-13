@@ -31,8 +31,6 @@ export default async function TagPostsPage({
   const searchParamsValue = await searchParams;
   const { after, before, first, last, s } = searchParamsValue ?? {};
 
-  console.info("slug: ", slug);
-
   return (
     <TagPostsTemplate
       tagSlug={slug}
