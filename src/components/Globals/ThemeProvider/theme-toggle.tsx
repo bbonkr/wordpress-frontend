@@ -12,12 +12,12 @@ export default function ThemeToggle() {
         id="light-switch"
         name="light-switch"
         className="light-switch sr-only"
-        checked={theme === "light"}
+        checked={theme === "cerberus"}
         onChange={() => {
-          if (theme === "dark") {
-            return setTheme("light");
+          if (theme === "vintage") {
+            return setTheme("cerberus");
           }
-          return setTheme("dark");
+          return setTheme("vintage");
         }}
       />
       <label className="relative cursor-pointer p-2" htmlFor="light-switch">

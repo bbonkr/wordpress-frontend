@@ -7,6 +7,7 @@ import Link from "next/link";
 import constants from "@/constants";
 import PaginationTemplate from "../Pagination/PaginationTemplate";
 import styles from "./CategoryListTemplate.module.css";
+
 interface PostListTemplate {
   after?: string;
   before?: string;
@@ -14,6 +15,7 @@ interface PostListTemplate {
   last?: string;
   s?: string;
   showPagination?: boolean;
+  isLoading?: boolean;
 }
 
 export default async function CategoriesListTemplate({
@@ -23,6 +25,7 @@ export default async function CategoriesListTemplate({
   last,
   s,
   showPagination,
+  isLoading,
 }: Readonly<PostListTemplate>) {
   const firstValue =
     !after && !before && !last ? `${constants.pagination.first}` : first;
@@ -42,22 +45,35 @@ export default async function CategoriesListTemplate({
       className={`w-full px-3 md:px-10 flex flex-col flex-1 justify-between ${styles.container}`}
     >
       <h1 className={styles.title}>
-        <Link href={`/categories/`}>Categories</Link>
+        {isLoading ? (
+          <div className="placeholder animate-pulse">&nbsp;</div>
+        ) : (
+          <Link href={`/categories/`}>Categories</Link>
+        )}
       </h1>
 
       <hr className="my-3" />
 
       {categories?.nodes?.length > 0 ? (
         <ul className="flex-1">
-          {categories?.nodes.map((node) => {
-            return (
-              <li key={node.slug} className="py-1">
-                <Link href={`/categories/${node.slug}`}>
-                  <span>{node?.name}</span>
-                </Link>
-              </li>
-            );
-          })}
+          {isLoading
+            ? new Array(10).fill(0).map((v, i, arr) => (
+                <li
+                  key={(v + i).toString()}
+                  className="placeholder animate-pulse my-1 py-1"
+                >
+                  &nbsp;
+                </li>
+              ))
+            : categories?.nodes.map((node) => {
+                return (
+                  <li key={node.slug} className="my-1 py-1">
+                    <Link href={`/categories/${node.slug}`}>
+                      <span>{node?.name}</span>
+                    </Link>
+                  </li>
+                );
+              })}
         </ul>
       ) : (
         <div className="flex-1 flex flex-col justify-center items-center ">
@@ -77,6 +93,7 @@ export default async function CategoriesListTemplate({
           <PaginationTemplate
             route="/categories/"
             pageInfo={categories.pageInfo}
+            isLoading={isLoading}
           />
         </>
       )}

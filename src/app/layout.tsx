@@ -19,10 +19,10 @@ export default async function RootLayout({
   const { isEnabled } = await draftMode();
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" data-theme="cerberus" suppressHydrationWarning>
       <body className={inter.className}>
+        <NextTopLoader />
         <Theme>
-          <NextTopLoader />
           <div className="flex flex-col min-h-screen">
             {isEnabled && <PreviewNotice />}
             <Navigation />

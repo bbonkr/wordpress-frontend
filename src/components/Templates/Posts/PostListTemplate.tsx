@@ -1,6 +1,6 @@
 import { print } from "graphql/language/printer";
 
-import { PostConnection } from "@/gql/graphql";
+import { Post, PostConnection } from "@/gql/graphql";
 import { fetchGraphQL } from "@/utils/fetchGraphQL";
 
 import { PostListQuery } from "./PostListQuery";
@@ -17,6 +17,7 @@ interface PostListTemplate {
   first?: string;
   last?: string;
   s?: string;
+  isLoading?: boolean;
 }
 
 export default async function PostListTemplate({
@@ -25,6 +26,7 @@ export default async function PostListTemplate({
   first,
   last,
   s,
+  isLoading,
 }: Readonly<PostListTemplate>) {
   const firstValue =
     !after && !before && !last ? `${constants.pagination.first}` : first;
@@ -44,7 +46,11 @@ export default async function PostListTemplate({
       className={`w-full px-3 md:px-10 flex flex-col flex-1 justify-between ${styles.container}`}
     >
       {posts?.nodes?.length > 0 ? (
-        <ListOfPostTemplate route="/" posts={posts.nodes} />
+        <ListOfPostTemplate
+          route="/"
+          posts={posts.nodes}
+          isLoading={isLoading}
+        />
       ) : (
         <div className="flex-1 flex flex-col justify-center items-center ">
           <div className="flex flex-col gap-3 w-full">
@@ -60,7 +66,11 @@ export default async function PostListTemplate({
       )}
 
       <hr />
-      <PaginationTemplate route="/" pageInfo={posts.pageInfo} />
+      <PaginationTemplate
+        route="/"
+        pageInfo={posts.pageInfo}
+        isLoading={isLoading}
+      />
     </div>
   );
 }
