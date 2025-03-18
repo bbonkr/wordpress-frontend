@@ -7,10 +7,12 @@ interface ListOfPostTemplateProps {
    * route should end with '/'
    */
   route: string | undefined;
+  isLoading?: boolean;
 }
 export default async function ListOfPostTemplate({
   posts,
   route,
+  isLoading,
 }: Readonly<ListOfPostTemplateProps>) {
   if (!posts || posts.length === 0) {
     return (
@@ -27,15 +29,26 @@ export default async function ListOfPostTemplate({
   }
   return (
     <ul className="flex-1">
-      {posts.map((node) => {
-        return (
-          <li key={node.slug} className="py-1">
-            <Link href={`${route ?? "/"}${node.slug}`}>
-              <span>{node.title}</span>
-            </Link>
-          </li>
-        );
-      })}
+      {isLoading
+        ? new Array(10).fill(0).map((v, i, arr) => (
+            <li key={v + i} className="placeholder animate-pulse my-1 py-1">
+              &nbsp;
+            </li>
+          ))
+        : posts.map((node) => {
+            return (
+              <li
+                key={node.slug}
+                className={`my-1 py-1 ${
+                  isLoading ? "placeholder animate-pulse" : ""
+                }`}
+              >
+                <Link href={`${route ?? "/"}${node.slug}`}>
+                  <span> {node.title}</span>
+                </Link>
+              </li>
+            );
+          })}
     </ul>
   );
 }

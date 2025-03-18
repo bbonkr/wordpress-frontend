@@ -24,7 +24,7 @@ export const PostContent = ({ content, classNames }: Readonly<PostContent>) => {
 
   return (
     <div
-      className={classNames}
+      className={`${classNames}`}
       dangerouslySetInnerHTML={{ __html: content ?? "" }}
     />
   );

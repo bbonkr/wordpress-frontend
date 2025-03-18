@@ -12,11 +12,12 @@ export default function ThemeToggle() {
         id="light-switch"
         name="light-switch"
         className="light-switch sr-only"
-        checked={theme === "light"}
+        checked={theme === "dark"}
         onChange={() => {
           if (theme === "dark") {
             return setTheme("light");
           }
+
           return setTheme("dark");
         }}
       />

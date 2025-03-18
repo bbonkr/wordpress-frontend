@@ -37,8 +37,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     );
 
     if (!contentNode) {
-      // return notFound();
-
       return {};
     }
 

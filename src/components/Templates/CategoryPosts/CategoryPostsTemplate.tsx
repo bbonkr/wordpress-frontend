@@ -11,12 +11,13 @@ import constants from "@/constants";
 import styles from "./CategoryPostsTemplate.module.css";
 
 interface PostListTemplate {
-  categorySlug: string;
+  categorySlug?: string;
   after?: string;
   before?: string;
   first?: string;
   last?: string;
   s?: string;
+  isLoading?: boolean;
 }
 
 export default async function CategoryPostsTemplate({
@@ -26,6 +27,7 @@ export default async function CategoryPostsTemplate({
   first,
   last,
   s,
+  isLoading,
 }: Readonly<PostListTemplate>) {
   const firstValue =
     !after && !before && !last ? `${constants.pagination.first}` : first;
@@ -33,7 +35,7 @@ export default async function CategoryPostsTemplate({
   const { category } = await fetchGraphQL<{
     category: Category;
   }>(print(CategoryPostsQuery), {
-    id: categorySlug,
+    id: categorySlug ?? "",
     after: after,
     before: before,
     first: firstValue ? parseInt(firstValue, 10) : undefined,
@@ -43,18 +45,26 @@ export default async function CategoryPostsTemplate({
 
   return (
     <div
-      className={`w-full px-3 md:px-10 flex flex-col flex-1 justify-between ${styles.container}`}
+      className={`w-full px-3 md:px-10 flex flex-col flex-1 justify-between entry-content ${styles.container}`}
     >
       <h1 className={styles.title}>
-        <Link href={`/categories/${category.slug}`}>
-          Posts in the <strong>{category.name}</strong> category
-        </Link>
+        {isLoading ? (
+          <div className="placeholder animate-pulse">&nbsp;</div>
+        ) : (
+          <Link href={`/categories/${category.slug}`}>
+            Posts in the <strong>{category.name}</strong> category
+          </Link>
+        )}
       </h1>
 
       <hr className="my-3" />
 
       {(category?.posts?.nodes?.length ?? 0) > 0 ? (
-        <ListOfPostTemplate route="/" posts={category?.posts?.nodes} />
+        <ListOfPostTemplate
+          route="/"
+          posts={category?.posts?.nodes}
+          isLoading={isLoading}
+        />
       ) : (
         <div className="flex-1 flex flex-col justify-center items-center ">
           <div className="flex flex-col gap-3 w-full">
@@ -71,6 +81,7 @@ export default async function CategoryPostsTemplate({
       <PaginationTemplate
         route={`/categories/${categorySlug}/`}
         pageInfo={category?.posts?.pageInfo}
+        isLoading={isLoading}
       />
     </div>
   );
