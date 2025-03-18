@@ -8,12 +8,14 @@ interface PaginationTemplateProps {
    * Route should end with '/'
    */
   route: string | undefined;
+  showIndicator?: boolean;
   isLoading?: boolean;
 }
 
 export default function PaginationTemplate({
   pageInfo,
   route,
+  showIndicator,
   isLoading,
 }: Readonly<PaginationTemplateProps>) {
   return (
@@ -42,7 +44,10 @@ export default function PaginationTemplate({
                     Constants.pagination.last
                   }`}
                 >
-                  Previous ({pageInfo?.hasPreviousPage ? "✅" : "❌"})
+                  Previous{" "}
+                  {showIndicator && (
+                    <>({pageInfo?.hasPreviousPage ? "✅" : "❌"})</>
+                  )}
                 </Link>
               ) : (
                 <span className="cursor-not-allowed">Previous</span>
@@ -56,7 +61,10 @@ export default function PaginationTemplate({
                     Constants.pagination.first
                   }`}
                 >
-                  Next ({pageInfo?.hasNextPage ? "✅" : "❌"})
+                  Next{" "}
+                  {showIndicator && (
+                    <>({pageInfo?.hasNextPage ? "✅" : "❌"})</>
+                  )}
                 </Link>
               ) : (
                 <span className="cursor-not-allowed">Next</span>

@@ -21,7 +21,7 @@ export default async function PostTemplate({ node, isLoading }: TemplateProps) {
 
   return (
     <div
-      className={`w-full px-3 md:px-10 flex flex-col flex-1  ${styles.post}`}
+      className={`w-full px-3 md:px-10 flex flex-col flex-1 entry-content ${styles.post}`}
     >
       <h1 className={styles.title}>
         {isLoading ? (
@@ -32,7 +32,9 @@ export default async function PostTemplate({ node, isLoading }: TemplateProps) {
       </h1>
       <div className={styles.author}>
         {isLoading ? (
-          <div className="placeholder animate-pulse"></div>
+          <div className="placeholder animate-pulse min-w-3/12 inline-block">
+            &nbsp;
+          </div>
         ) : (
           <>By {post?.author?.node.name}</>
         )}
@@ -50,7 +52,7 @@ export default async function PostTemplate({ node, isLoading }: TemplateProps) {
               )}
             </h4>
             <div className={styles.categories}>
-              <ul className="flex flex-row gap-3">
+              <ul className="flex flex-row gap-2 flex-wrap">
                 {isLoading
                   ? new Array(3).fill(10).map((v, i, arr) => (
                       <li
@@ -77,7 +79,7 @@ export default async function PostTemplate({ node, isLoading }: TemplateProps) {
       <hr className="my-3" />
 
       {isLoading ? (
-        <div className={`whitespace-break-spaces ${styles.body}`}>
+        <div className={` ${styles.body} post `}>
           {new Array(10).fill(0).map((v, i, arr) => (
             <div key={i + v} className="placeholder animate-pulse my-1">
               &nbsp;
@@ -88,13 +90,13 @@ export default async function PostTemplate({ node, isLoading }: TemplateProps) {
         <Suspense
           fallback={
             <div
-              className={`whitespace-break-spaces ${styles.body} post entry-content`}
+              className={` ${styles.body} post`}
               dangerouslySetInnerHTML={{ __html: post?.content ?? "" }}
             />
           }
         >
           <PostContent
-            classNames={`whitespace-break-spaces ${styles.body} post entry-content`}
+            classNames={` ${styles.body} post`}
             content={post?.content ?? ""}
           />
         </Suspense>
@@ -114,7 +116,7 @@ export default async function PostTemplate({ node, isLoading }: TemplateProps) {
               )}{" "}
             </h4>
             <div className={styles.tags}>
-              <ul className="flex flex-row gap-3">
+              <ul className="flex flex-row gap-2 flex-wrap">
                 {isLoading
                   ? new Array(3).fill(10).map((v, i, arr) => (
                       <li

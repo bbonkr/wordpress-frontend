@@ -7,10 +7,11 @@ export default function Theme({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <ThemeProvider
-      attribute="data-theme"
-      enableSystem
-      themes={["cerberus", "vintage"]}
+      storageKey="mode"
+      attribute="class"
       enableColorScheme
+      enableSystem
+      disableTransitionOnChange={false}
     >
       {children}
     </ThemeProvider>

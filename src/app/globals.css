@@ -1,14 +1,15 @@
 @import "tailwindcss";
-@import "@skeletonlabs/skeleton";
-@import "@skeletonlabs/skeleton/optional/presets";
-@import "@skeletonlabs/skeleton/themes/cerberus";
-
-@import "@skeletonlabs/skeleton/themes/catppuccin";
-@import "@skeletonlabs/skeleton/themes/vintage";
-@source '../../node_modules/@skeletonlabs/skeleton-react/dist';
 
 * {
   box-sizing: border-box;
+}
+
+ul,
+ol {
+  padding: 0;
+  margin: 0;
+  padding-inline-start: 0;
+  margin-block-start: 0;
 }
 
 html,
@@ -25,4 +26,135 @@ body {
 
 a {
   text-decoration: underline;
+}
+
+.placeholder {
+  @apply bg-slate-400 dark:bg-slate-200;
+}
+
+.entry-content .wp-block-jetpack-markdown {
+  padding-top: 0.6rem;
+  padding-bottom: 0.6rem;
+}
+
+.entry-content ul,
+.entry-content ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.entry-content p,
+.entry-content div,
+.entry-content pre,
+.entry-content pre code,
+.entry-content ul li,
+.entry-content ol li {
+  @apply my-1 py-1;
+}
+
+.entry-content.grecaptcha-badge {
+  visibility: hidden;
+}
+
+.entry-content .wp-block-jetpack-markdown,
+.wp-block-jetpack-markdown {
+  padding-top: 0.6rem;
+  padding-bottom: 0.6rem;
+}
+
+.grecaptcha-badge,
+.entry-content.grecaptcha-badge {
+  visibility: hidden;
+}
+
+.page h2,
+.post h2 {
+  border-left-style: solid;
+  border-left-color: var(--wp--preset--color--vivid-red);
+  border-left-width: thick;
+  padding-left: 0.3rem;
+  margin: 1.2rem auto 0.6rem;
+}
+
+.page h3,
+.post h3 {
+  border-left-style: solid;
+  border-left-color: var(--wp--preset--color--vivid-red);
+  border-left-width: medium;
+  padding-left: 0.3rem;
+  margin: 1rem auto 0.6rem;
+}
+
+.page h4,
+.post h4 {
+  border-left-style: solid;
+  border-left-color: var(--wp--preset--color--vivid-red);
+  border-left-width: thin;
+  padding-left: 0.3rem;
+  margin: 0.8rem auto 0.6rem;
+}
+
+.post ul,
+.post ol,
+.page ul,
+.page ol {
+  list-style: disc;
+  list-style-position: inside;
+  padding: 0;
+  margin: 0;
+}
+
+.post blockquote:before,
+.post blockquote:after,
+.page blockquote:before,
+.page blockquote:after {
+  background-color: initial;
+}
+
+.post blockquote:before,
+.page blockquote:before {
+  @apply my-3 py-3;
+}
+.post blockquote:after,
+.page blockquote:after {
+  @apply my-3 py-3;
+}
+
+.post blockquote,
+.page blockquote {
+  border-left-style: solid;
+  border-left-width: thick;
+  padding-left: 1.3rem;
+  /* @apply dark:bg-slate-800 bg-slate-200 dark:border-slate-400 border-slate-500; */
+  /* @apply bg-slate-200 border-slate-500; */
+  background-color: var(--color-slate-200);
+  border-color: var(--color-slate-500);
+}
+
+@media (prefers-color-scheme: dark) {
+  .post blockquote,
+  .page blockquote {
+    background-color: var(--color-slate-800);
+    border-color: var(--color-slate-400);
+  }
+}
+
+.post blockquote p,
+.page blockquote p {
+  @apply my-1 py-3;
+}
+
+.post .footnotes::before,
+.page .footnotes::before {
+  content: "Notes";
+}
+
+.post .footnotes,
+.page .footnotes {
+  @apply pt-3 mt-3;
+}
+
+.post pre {
+  @apply overflow-x-scroll;
 }

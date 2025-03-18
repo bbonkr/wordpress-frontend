@@ -30,6 +30,7 @@ export default async function CategoriesPage({
       first={first?.toString()}
       last={last?.toString()}
       s={s?.toString()}
+      showPagination
     />
   );
 }

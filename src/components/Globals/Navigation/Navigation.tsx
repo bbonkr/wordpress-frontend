@@ -33,7 +33,13 @@ async function getData() {
   return menuItems;
 }
 
-export default async function Navigation() {
+interface NavigationProps {
+  useThemeSwicher?: boolean;
+}
+
+export default async function Navigation({
+  useThemeSwicher,
+}: Readonly<NavigationProps>) {
   const menuItems = await getData();
 
   return (
@@ -50,15 +56,14 @@ export default async function Navigation() {
           <Link
             itemProp="url"
             href={item.uri}
-            key={index}
-            target={item.target || "_self"}
+            key={item.uri}
+            target={item.target ?? "_self"}
           >
             <span itemProp="name">{item.label}</span>
           </Link>
         );
       })}
-
-      <ThemeToggle />
+      {useThemeSwicher && <ThemeToggle />}
     </nav>
   );
 }

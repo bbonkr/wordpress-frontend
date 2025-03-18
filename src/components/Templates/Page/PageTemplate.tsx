@@ -16,7 +16,7 @@ export default async function PageTemplate({ node, isLoading }: TemplateProps) {
 
   return (
     <div
-      className={`w-full px-3 md:px-10 flex flex-col flex-1 justify-between ${styles.post}`}
+      className={`w-full px-3 md:px-10 flex flex-col flex-1 justify-between entry-content ${styles.post}`}
     >
       {isLoading ? (
         <div className={`${styles.body}`}>
@@ -28,7 +28,7 @@ export default async function PageTemplate({ node, isLoading }: TemplateProps) {
         </div>
       ) : (
         <div
-          className={`${styles.body} post entry-content`}
+          className={`${styles.body} page`}
           dangerouslySetInnerHTML={{ __html: page?.content || "" }}
         />
       )}
