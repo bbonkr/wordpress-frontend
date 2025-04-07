@@ -14,8 +14,8 @@ export const setSeoData = ({ seo, slug }: ContentNode) => {
     openGraph: {
       title: seo.opengraphTitle || "",
       description: seo.opengraphDescription || "",
-      // url: seo.opengraphUrl || "",
-      url: `${slug}`,
+
+      url: `${process.env.NEXT_PUBLIC_BASE_URL}/${slug}`,
       siteName: seo.opengraphSiteName || "",
       images: [
         {

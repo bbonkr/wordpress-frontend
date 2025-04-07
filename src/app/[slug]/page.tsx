@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return {
       ...metadata,
       alternates: {
-        canonical: slug,
+        canonical: `${process.env.NEXT_PUBLIC_BASE_URL}/${slug}`,
       },
     } as Metadata;
   } else {
