@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
     { slug: notFoundPageWordPressId, idType: "DATABASE_ID" }
   );
 
-  const metadata = setSeoData({ seo: contentNode.seo });
+  const metadata = setSeoData(contentNode);
 
   return {
     ...metadata,

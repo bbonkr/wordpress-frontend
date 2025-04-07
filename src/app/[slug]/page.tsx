@@ -40,12 +40,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       return {};
     }
 
-    const metadata = setSeoData({ seo: contentNode.seo });
+    const metadata = setSeoData(contentNode);
 
     return {
       ...metadata,
       alternates: {
-        canonical: `${process.env.NEXT_PUBLIC_BASE_URL}${slug}`,
+        canonical: slug,
       },
     } as Metadata;
   } else {

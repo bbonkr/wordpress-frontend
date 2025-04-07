@@ -7,6 +7,7 @@ type Props = {
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
+    title: "categories | ",
     alternates: {
       canonical: `${process.env.NEXT_PUBLIC_BASE_URL}/categories`,
     },
