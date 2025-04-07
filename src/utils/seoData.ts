@@ -1,6 +1,6 @@
-import { Page } from "@/gql/graphql";
+import { ContentNode } from "@/gql/graphql";
 
-export const setSeoData = ({ seo }: { seo: Page["seo"] }) => {
+export const setSeoData = ({ seo, slug }: ContentNode) => {
   if (!seo) return {};
 
   return {
@@ -14,7 +14,8 @@ export const setSeoData = ({ seo }: { seo: Page["seo"] }) => {
     openGraph: {
       title: seo.opengraphTitle || "",
       description: seo.opengraphDescription || "",
-      url: seo.opengraphUrl || "",
+
+      url: `${process.env.NEXT_PUBLIC_BASE_URL}/${slug}`,
       siteName: seo.opengraphSiteName || "",
       images: [
         {
@@ -24,14 +25,16 @@ export const setSeoData = ({ seo }: { seo: Page["seo"] }) => {
           alt: seo.opengraphImage?.altText || "",
         },
       ],
-      locale: "da_DK",
-      type: seo.opengraphType || "website",
+      locale: "ko_KR",
+      type: seo.opengraphType ?? "website",
     },
     twitter: {
       card: "summary_large_image",
-      title: seo.twitterTitle || "",
-      description: seo.twitterDescription || "",
-      images: [seo.twitterImage?.sourceUrl || ""],
+      title: seo.twitterTitle ?? seo.opengraphTitle ?? "",
+      description: seo.twitterDescription ?? seo.opengraphDescription ?? "",
+      images: seo.twitterImage
+        ? [seo.twitterImage?.sourceUrl ?? ""]
+        : [seo.opengraphImage?.sourceUrl ?? ""],
     },
   };
 };
