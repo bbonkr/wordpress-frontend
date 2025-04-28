@@ -5,10 +5,11 @@ import Navigation from "@/components/Globals/Navigation/Navigation";
 import { PreviewNotice } from "@/components/Globals/PreviewNotice/PreviewNotice";
 import Theme from "@/components/Globals/ThemeProvider/theme-provider";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import Script from "next/script";
+import { Analytics } from "@vercel/analytics/next";
 
 import "@/app/globals.css";
 import "@/app/prism.css";
-import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -35,15 +36,13 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        {gaId && (
+          <link rel="preconnect" href="https://www.googletagmanager.com" />
+        )}
+        {clarityId && <link rel="preconnect" href="https://www.clarity.ms" />}
         {mediaUrl && (
           <>
             <link rel="preconnect" href={mediaUrl} />
-            {gaId && (
-              <link rel="preconnect" href="https://www.googletagmanager.com" />
-            )}
-            {clarityId && (
-              <link rel="preconnect" href="https://www.clarity.ms" />
-            )}
             {appleTouchIconSizes.map((s) => (
               <link
                 key={`apple-touch-icon-size-${s}`}
@@ -74,6 +73,7 @@ export default async function RootLayout({
             {children}
           </div>
         </Theme>
+        <Analytics />
       </body>
       {gaId && <GoogleAnalytics gaId={gaId} />}
       {clarityId && (
