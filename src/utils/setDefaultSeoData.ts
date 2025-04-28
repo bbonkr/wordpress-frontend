@@ -18,7 +18,11 @@ export const setDefaultSeoData = (
   }
 
   if (routeDescription) {
-    actualTitle = `Posts in ${actualTitle} ${routeDescription}`;
+    if (actualTitle) {
+      actualTitle = `Posts in ${actualTitle} ${routeDescription}`;
+    } else {
+      actualTitle = `${routeDescription}`;
+    }
   }
 
   actualTitle = actualTitle ? `${actualTitle} | ${title ?? ""}` : title ?? "";
