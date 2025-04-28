@@ -3,6 +3,7 @@ import { fetchGraphQL } from "@/utils/fetchGraphQL";
 import { GeneralSettingsQuery } from "@/queries/general/GeneralSettingsQuery";
 import { GeneralSettings } from "@/gql/graphql";
 import { print } from "graphql/language/printer";
+import constants from "@/constants";
 
 export default async function manifest(): Promise<MetadataRoute.Manifest> {
   const mediaBaseUrl = process.env.NEXT_PUBLIC_MEDIA_URL ?? "";
@@ -19,8 +20,8 @@ export default async function manifest(): Promise<MetadataRoute.Manifest> {
     { size: 192, density: 4.0 },
   ];
 
-  const backgroundColor = "#ffffff";
-  const themeColor = "#e32f12";
+  const backgroundColor = constants.colors.backgroundColor;
+  const themeColor = constants.colors.themeColor;
 
   const { generalSettings } = await fetchGraphQL<{
     generalSettings: GeneralSettings;
@@ -34,7 +35,7 @@ export default async function manifest(): Promise<MetadataRoute.Manifest> {
     description: generalSettings?.description ?? "",
     icons: mediaBaseUrl
       ? sizes.map((s) => ({
-          src: `${mediaBaseUrl}/${baseRoute}/${filename}${s.size}${fileExtension}}`,
+          src: `${mediaBaseUrl}/${baseRoute}/${filename}${s.size}${fileExtension}`,
           sizes: `${s.size}x${s.size}`,
           type: "image/png",
           density: `${s.density}`,
