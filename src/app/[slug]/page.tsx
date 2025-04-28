@@ -3,14 +3,16 @@ import { notFound } from "next/navigation";
 import { print } from "graphql/language/printer";
 
 import { setSeoData } from "@/utils/seoData";
+import { setDefaultSeoData } from "@/utils/setDefaultSeoData";
 
 import { fetchGraphQL } from "@/utils/fetchGraphQL";
 import { ContentInfoQuery } from "@/queries/general/ContentInfoQuery";
-import { ContentNode } from "@/gql/graphql";
+import { ContentNode, GeneralSettings } from "@/gql/graphql";
 import PageTemplate from "@/components/Templates/Page/PageTemplate";
 import { nextSlugToWpSlug } from "@/utils/nextSlugToWpSlug";
 import PostTemplate from "@/components/Templates/Post/PostTemplate";
 import { SeoQuery } from "@/queries/general/SeoQuery";
+import { GeneralSettingsQuery } from "@/queries/general/GeneralSettingsQuery";
 
 type Props = {
   params: Promise<{
@@ -19,6 +21,7 @@ type Props = {
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "";
   const paramValue = await params;
 
   const slug = nextSlugToWpSlug(paramValue.slug);
@@ -45,11 +48,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return {
       ...metadata,
       alternates: {
-        canonical: `${process.env.NEXT_PUBLIC_BASE_URL}/${slug}`,
+        canonical: `${baseUrl}/${slug}`,
       },
     } as Metadata;
   } else {
-    return {};
+    const { generalSettings } = await fetchGraphQL<{
+      generalSettings: GeneralSettings;
+    }>(print(GeneralSettingsQuery), {});
+
+    const metadata = setDefaultSeoData(generalSettings, "");
+
+    return {
+      ...metadata,
+      alternates: {
+        canonical: `${baseUrl}/${slug ?? ""}`,
+      },
+    } as Metadata;
   }
 }
 

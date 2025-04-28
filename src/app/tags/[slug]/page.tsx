@@ -1,6 +1,11 @@
 export const dynamic = "force-dynamic";
 import TagPostsTemplate from "@/components/Templates/TagPosts/TagPostsTemplate";
 import type { Metadata } from "next";
+import { GeneralSettingsQuery } from "@/queries/general/GeneralSettingsQuery";
+import { GeneralSettings } from "@/gql/graphql";
+import { fetchGraphQL } from "@/utils/fetchGraphQL";
+import { setDefaultSeoData } from "@/utils/setDefaultSeoData";
+import { print } from "graphql/language/printer";
 
 type Props = {
   params: Promise<{
@@ -12,11 +17,22 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
 
+  const title = "Tag";
+  const route = "tags";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "";
+
+  const { generalSettings } = await fetchGraphQL<{
+    generalSettings: GeneralSettings;
+  }>(print(GeneralSettingsQuery), {});
+
+  const metadata = setDefaultSeoData(generalSettings, route, title, slug);
+
   return {
+    ...metadata,
     alternates: {
-      canonical: `${process.env.NEXT_PUBLIC_BASE_URL}/tags/${slug}`,
+      canonical: `${baseUrl}/${route}/${slug}`,
     },
-  };
+  } as Metadata;
 }
 
 export function generateStaticParams() {
