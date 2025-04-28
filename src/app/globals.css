@@ -68,6 +68,16 @@ a {
   visibility: hidden;
 }
 
+.page h1::before,
+.post h1::before {
+  content: "# ";
+}
+
+.page h2::before,
+.post h2::before {
+  content: "## ";
+}
+
 .page h2,
 .post h2 {
   border-left-style: solid;
@@ -75,6 +85,12 @@ a {
   border-left-width: thick;
   padding-left: 0.3rem;
   margin: 1.2rem auto 0.6rem;
+  size: 1.2rem;
+}
+
+.page h3::before,
+.post h3::before {
+  content: "### ";
 }
 
 .page h3,
@@ -86,6 +102,11 @@ a {
   margin: 1rem auto 0.6rem;
 }
 
+.page h4::before,
+.post h4::before {
+  content: "#### ";
+}
+
 .page h4,
 .post h4 {
   border-left-style: solid;
@@ -93,6 +114,11 @@ a {
   border-left-width: thin;
   padding-left: 0.3rem;
   margin: 0.8rem auto 0.6rem;
+}
+
+.page h5::before,
+.post h5::before {
+  content: "##### ";
 }
 
 .post ul,
@@ -157,4 +183,46 @@ a {
 
 .post pre {
   @apply overflow-x-scroll;
+}
+
+.entry-content table {
+  min-width: 100%;
+  overflow-x: auto;
+}
+
+.entry-content table tr td,
+.entry-content table tr th {
+  @apply p-3;
+}
+
+.entry-content table thead tr:first-child {
+  background-color: var(--color-slate-300);
+}
+
+.entry-content table tbody tr:nth-child(even) {
+  background-color: var(--color-slate-300);
+}
+.entry-content table tbody tr:nth-child(odd) {
+  background-color: var(--color-slate-100);
+}
+
+.entry-content table tr:nth-child(even) {
+  background-color: var(--color-slate-200);
+}
+
+@media (prefers-color-scheme: dark) {
+  .entry-content table thead tr:first-child {
+    background-color: var(--color-slate-800);
+  }
+
+  .entry-content table tbody tr:nth-child(even) {
+    background-color: var(--color-slate-700);
+  }
+  .entry-content table tbody tr:nth-child(odd) {
+    background-color: var(--color-slate-600);
+  }
+
+  .entry-content table tr:nth-child(even) {
+    background-color: var(--color-slate-200);
+  }
 }
