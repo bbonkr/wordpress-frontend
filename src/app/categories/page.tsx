@@ -1,17 +1,32 @@
 import type { Metadata } from "next";
 import CategoriesListTemplate from "@/components/Templates/Categories/CategoryListTemplate";
+import { fetchGraphQL } from "@/utils/fetchGraphQL";
+import { GeneralSettings } from "@/gql/graphql";
+import { GeneralSettingsQuery } from "@/queries/general/GeneralSettingsQuery";
+import { print } from "graphql/language/printer";
+import { setDefaultSeoData } from "@/utils/setDefaultSeoData";
 
 type Props = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
 export async function generateMetadata(): Promise<Metadata> {
+  const title = "Categories";
+  const slug = "categories";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "";
+
+  const { generalSettings } = await fetchGraphQL<{
+    generalSettings: GeneralSettings;
+  }>(print(GeneralSettingsQuery), {});
+
+  const metadata = setDefaultSeoData(generalSettings, slug, title, "");
+
   return {
-    title: "categories | ",
+    ...metadata,
     alternates: {
-      canonical: `${process.env.NEXT_PUBLIC_BASE_URL}/categories`,
+      canonical: `${baseUrl}/${slug}`,
     },
-  };
+  } as Metadata;
 }
 
 export function generateStaticParams() {
