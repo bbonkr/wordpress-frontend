@@ -67,11 +67,14 @@ export default async function RootLayout({
       <body className={inter.className}>
         <Theme>
           <NextTopLoader />
-          <div className="flex flex-col min-h-screen">
+          <>
+            {/* <div className="flex flex-col min-h-screen"></div> */}
             {isEnabled && <PreviewNotice />}
-            <Navigation />
-            {children}
-          </div>
+            <header>
+              <Navigation />
+            </header>
+            <main>{children}</main>
+          </>
         </Theme>
         <Analytics />
       </body>

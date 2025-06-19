@@ -8,8 +8,6 @@ interface PostContent {
 }
 
 export const PostContent = ({ content, classNames }: Readonly<PostContent>) => {
-  useEffect(() => {}, []);
-
   useEffect(() => {
     const cdeBlockRegex = /<pre>(\W|\s)?<code(\W|\s)?(class="language)?/gi;
 

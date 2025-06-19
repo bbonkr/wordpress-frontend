@@ -8,9 +8,8 @@ export const PostQuery = gql`
       title
       author {
         node {
-          name
-          nicename
           nickname
+          name
           avatar {
             height
             width

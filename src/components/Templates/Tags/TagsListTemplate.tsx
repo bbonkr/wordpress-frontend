@@ -42,7 +42,7 @@ export default async function TagsListTemplate({
 
   return (
     <div
-      className={`w-full px-3 md:px-10 flex flex-col flex-1 justify-between entry-content ${styles.container}`}
+      className={`w-full flex flex-col flex-1 justify-between entry-content ${styles.container}`}
     >
       <h1 className={styles.title}>
         {isLoading ? (
@@ -67,13 +67,11 @@ export default async function TagsListTemplate({
               ))
             : tags?.nodes.map((node) => {
                 return (
-                  <li key={node.slug} className="py-1">
-                    <Link href={`/tags/${node.slug}`}>
-                      <span>{node?.name}</span>
-                      <span>
-                        <small>({node.count})</small>
-                      </span>
-                    </Link>
+                  <li key={node.slug} className="py-1 flex flex-row gap-1">
+                    <Link href={`/tags/${node.slug}`}>{node?.name}</Link>
+                    <span>
+                      <small>({node.count})</small>
+                    </span>
                   </li>
                 );
               })}

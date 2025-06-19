@@ -45,7 +45,7 @@ export default async function CategoryPostsTemplate({
 
   return (
     <div
-      className={`w-full px-3 md:px-10 flex flex-col flex-1 justify-between entry-content ${styles.container}`}
+      className={`w-full flex flex-col flex-1 justify-between entry-content ${styles.container}`}
     >
       <h1 className={styles.title}>
         {isLoading ? (
