@@ -43,7 +43,7 @@ export default async function PostListTemplate({
 
   return (
     <div
-      className={`w-full px-3 md:px-10 flex flex-col flex-1 justify-between ${styles.container}`}
+      className={`flex flex-col flex-1 w-full justify-between ${styles.container}`}
     >
       {posts?.nodes?.length > 0 ? (
         <ListOfPostTemplate

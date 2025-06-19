@@ -19,24 +19,46 @@ export default async function PostTemplate({ node, isLoading }: TemplateProps) {
     id: node?.databaseId ?? "",
   });
 
+  console.info(post?.author?.node);
+
   return (
-    <div
-      className={`w-full px-3 md:px-10 flex flex-col flex-1 entry-content ${styles.post}`}
-    >
-      <h1 className={styles.title}>
+    <div className={`w-full flex flex-col flex-1 entry-content ${styles.post}`}>
+      <h1 className={`post-title ${styles.title}`}>
         {isLoading ? (
           <div className="placeholder animate-pulse">&nbsp;</div>
         ) : (
           <>{post?.title}</>
         )}
       </h1>
-      <div className={styles.author}>
+      <div className={`w-full flex flex-row justify-center ${styles.author}`}>
         {isLoading ? (
           <div className="placeholder animate-pulse min-w-3/12 inline-block">
             &nbsp;
           </div>
         ) : (
-          <>By {post?.author?.node.name}</>
+          <Link href="/profile">
+            <div className="flex flex-row gap-1 items-center">
+              <span>By</span>
+
+              <span>
+                {post?.author?.node.nickname ?? post?.author?.node.name}
+              </span>
+
+              {post?.author?.node.avatar?.url ? (
+                <img
+                  src={post?.author?.node.avatar?.url}
+                  alt={
+                    post?.author?.node.nickname ??
+                    post?.author?.node.username ??
+                    "author image"
+                  }
+                  className="w-8 rounded-full"
+                />
+              ) : (
+                <></>
+              )}
+            </div>
+          </Link>
         )}
       </div>
       <aside>

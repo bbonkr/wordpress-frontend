@@ -7,4 +7,8 @@ export default {
     backgroundColor: "#ffffff",
     themeColor: "#e32f12",
   },
+  contentTypeNames: {
+    page: "page",
+    post: "post",
+  } as const,
 } as const;

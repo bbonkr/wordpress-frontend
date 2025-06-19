@@ -13,6 +13,7 @@ import { nextSlugToWpSlug } from "@/utils/nextSlugToWpSlug";
 import PostTemplate from "@/components/Templates/Post/PostTemplate";
 import { SeoQuery } from "@/queries/general/SeoQuery";
 import { GeneralSettingsQuery } from "@/queries/general/GeneralSettingsQuery";
+import constants from "@/constants";
 
 type Props = {
   params: Promise<{
@@ -88,9 +89,9 @@ export default async function Page({ params }: Readonly<Props>) {
   if (!contentNode) return notFound();
 
   switch (contentNode.contentTypeName) {
-    case "page":
+    case constants.contentTypeNames.page: // "page":
       return <PageTemplate node={contentNode} />;
-    case "post":
+    case constants.contentTypeNames.post: // "post":
       return <PostTemplate node={contentNode} />;
     default:
       return <p>{contentNode.contentTypeName} not implemented</p>;
