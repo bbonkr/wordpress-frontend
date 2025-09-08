@@ -19,8 +19,6 @@ export default async function PostTemplate({ node, isLoading }: TemplateProps) {
     id: node?.databaseId ?? "",
   });
 
-  console.info(post?.author?.node);
-
   return (
     <div className={`w-full flex flex-col flex-1 entry-content ${styles.post}`}>
       <h1 className={`post-title ${styles.title}`}>

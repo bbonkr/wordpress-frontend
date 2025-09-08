@@ -12,9 +12,11 @@ export const setDefaultSeoData = (
   const defaultImageUrl = process.env.NEXT_PUBLIC_DEFAULT_IMAGE_URL ?? "";
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "";
 
+  const decodedSlug = decodeURIComponent(slug ?? "");
+
   let actualTitle = "";
   if (slug) {
-    actualTitle = slug;
+    actualTitle = decodedSlug;
   }
 
   if (routeDescription) {
