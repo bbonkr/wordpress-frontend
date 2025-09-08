@@ -43,6 +43,8 @@ export default async function TagPostsTemplate({
     s: s,
   });
 
+  const tagName = decodeURIComponent(tagSlug ?? "");
+
   return (
     <div
       className={`w-full flex flex-col flex-1 justify-between entry-content ${styles.container}`}
@@ -51,8 +53,8 @@ export default async function TagPostsTemplate({
         {isLoading ? (
           <div className="placeholder animate-pulse">&nbsp;</div>
         ) : (
-          <Link href={`/tags/${tag.slug}`}>
-            Posts with the <strong> {tag.name}</strong> tag
+          <Link href={`/tags/${tag?.slug ?? tagSlug}`}>
+            Posts with the <strong> {tag?.name ?? tagName}</strong> tag
           </Link>
         )}
       </h1>
