@@ -44,3 +44,5 @@ certificates
 
 #generated
 gql
+# agent wokring directory
+.work/
