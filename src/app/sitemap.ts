@@ -1,21 +1,21 @@
 import { MetadataRoute } from "next";
-import { getAllPostSlugs } from "@/lib/strapi/client";
+import { getAllPostsForSitemap } from "@/lib/strapi/client";
 
 export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "";
-  let slugs: string[] = [];
+  let posts: { slug: string; updatedAt: string }[] = [];
   try {
-    slugs = await getAllPostSlugs();
+    posts = await getAllPostsForSitemap();
   } catch {
     // Strapi API 미설정 시 빈 sitemap 반환
     return [];
   }
 
-  return slugs.map((slug) => ({
+  return posts.map(({ slug, updatedAt }) => ({
     url: `${baseUrl}/${slug}`,
-    lastModified: new Date(),
+    lastModified: updatedAt ? new Date(updatedAt) : new Date(),
     changeFrequency: "weekly",
     priority: 0.8,
   }));

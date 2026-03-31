@@ -160,7 +160,37 @@ export async function getPostByDocumentId(
   const res = await fetchStrapi<StrapiResponse<StrapiPost>>(
     `/api/posts/${documentId}${query}`
   );
-  return res.data ?? null;
+  // BASE_URL 미설정 시 폴백이 data:[] 배열을 반환하므로 배열인 경우 null 처리
+  return Array.isArray(res.data) ? null : res.data ?? null;
+}
+
+export async function getAllPostsForSitemap(): Promise<
+  { slug: string; updatedAt: string }[]
+> {
+  const first = await getPosts({
+    page: 1,
+    pageSize: 100,
+    fields: ["slug", "updatedAt"],
+    populate: [],
+  });
+  const items = first.data.map((p) => ({
+    slug: p.slug,
+    updatedAt: p.updatedAt,
+  }));
+  const { pageCount } = first.meta.pagination;
+
+  if (pageCount <= 1) return items;
+
+  const remaining = await Promise.all(
+    Array.from({ length: pageCount - 1 }, (_, i) =>
+      getPosts({ page: i + 2, pageSize: 100, fields: ["slug", "updatedAt"], populate: [] })
+    )
+  );
+  for (const res of remaining) {
+    items.push(...res.data.map((p) => ({ slug: p.slug, updatedAt: p.updatedAt })));
+  }
+
+  return items;
 }
 
 export async function getAllPostSlugs(): Promise<string[]> {
