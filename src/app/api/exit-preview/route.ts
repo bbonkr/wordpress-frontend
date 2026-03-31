@@ -3,19 +3,16 @@ import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const path = searchParams.get("path");
+  const rawPath = searchParams.get("path") ?? "/";
+  // Open Redirect 방지: 내부 경로만 허용 (백슬래시 우회 포함)
+  const safePath =
+    rawPath.startsWith("/") && !rawPath.startsWith("//") && !rawPath.startsWith("/\\")
+      ? rawPath
+      : "/";
 
-  // draftMode().disable();
   const draftModeValue = await draftMode();
   draftModeValue.disable();
 
-  const response = NextResponse.redirect(
-    `${process.env.NEXT_PUBLIC_BASE_URL}${path}`
-  );
-  response.headers.set(
-    "Set-Cookie",
-    `wp_jwt=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;`
-  );
-
-  return response;
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "";
+  return NextResponse.redirect(`${baseUrl}${safePath}`);
 }

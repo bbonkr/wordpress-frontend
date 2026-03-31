@@ -3,21 +3,23 @@ const nextConfig = {
   trailingSlash: true,
   images: {
     remotePatterns: [
-      {
-        protocol: "http",
-        hostname: process.env.NEXT_PUBLIC_WORDPRESS_API_HOSTNAME,
-        port: "",
-      },
-      {
-        protocol: "https",
-        hostname: process.env.NEXT_PUBLIC_WORDPRESS_API_HOSTNAME,
-        port: "443",
-      },
-      {
-        protocol: "https",
-        hostname: process.env.NEXT_PUBLIC_MEDIA_HOSTNAME,
-        port: "443",
-      },
+      ...(process.env.NEXT_PUBLIC_STRAPI_API_HOSTNAME
+        ? [
+            {
+              protocol: "https",
+              hostname: process.env.NEXT_PUBLIC_STRAPI_API_HOSTNAME,
+            },
+          ]
+        : []),
+      ...(process.env.NEXT_PUBLIC_MEDIA_HOSTNAME
+        ? [
+            {
+              protocol: "https",
+              hostname: process.env.NEXT_PUBLIC_MEDIA_HOSTNAME,
+              port: "443",
+            },
+          ]
+        : []),
     ],
   },
 };

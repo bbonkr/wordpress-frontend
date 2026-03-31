@@ -1,99 +1,79 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { print } from "graphql/language/printer";
-
-import { setSeoData } from "@/utils/seoData";
-import { setDefaultSeoData } from "@/utils/setDefaultSeoData";
-
-import { fetchGraphQL } from "@/utils/fetchGraphQL";
-import { ContentInfoQuery } from "@/queries/general/ContentInfoQuery";
-import { ContentNode, GeneralSettings } from "@/gql/graphql";
-import PageTemplate from "@/components/Templates/Page/PageTemplate";
-import { nextSlugToWpSlug } from "@/utils/nextSlugToWpSlug";
+import { getPostBySlug, getAllPostSlugs } from "@/lib/strapi/client";
 import PostTemplate from "@/components/Templates/Post/PostTemplate";
-import { SeoQuery } from "@/queries/general/SeoQuery";
-import { GeneralSettingsQuery } from "@/queries/general/GeneralSettingsQuery";
-import constants from "@/constants";
+import { buildArticleMetadata, stripHtml } from "@/lib/metadata";
 
 type Props = {
-  params: Promise<{
-    slug: string;
-  }>;
+  params: Promise<{ slug: string }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "";
-  const paramValue = await params;
+  const { slug } = await params;
+  const post = await getPostBySlug(slug);
 
-  const slug = nextSlugToWpSlug(paramValue.slug);
+  if (!post) return {};
 
-  const slugs = slug.split("/").filter((x) => Boolean(x));
-
-  if (slugs && slugs.length > 0) {
-    const isPreview = slugs.includes("preview");
-
-    const { contentNode } = await fetchGraphQL<{ contentNode: ContentNode }>(
-      print(SeoQuery),
-      {
-        slug: isPreview ? slugs[1] : decodeURIComponent(slugs[0]),
-        idType: isPreview ? "DATABASE_ID" : "URI",
-      }
-    );
-
-    if (!contentNode) {
-      return {};
-    }
-
-    const metadata = setSeoData(contentNode);
-
-    return {
-      ...metadata,
-      alternates: {
-        canonical: `${baseUrl}/${slug}`,
-      },
-    } as Metadata;
-  } else {
-    const { generalSettings } = await fetchGraphQL<{
-      generalSettings: GeneralSettings;
-    }>(print(GeneralSettingsQuery), {});
-
-    const metadata = setDefaultSeoData(generalSettings, "");
-
-    return {
-      ...metadata,
-      alternates: {
-        canonical: `${baseUrl}/${slug ?? ""}`,
-      },
-    } as Metadata;
-  }
+  return buildArticleMetadata({
+    fallbackTitle: post.title,
+    defaultPath: slug,
+    seo: post.seo?.[0],
+    fallbackDescription: post.excerpt,
+    publishedAt: post.published,
+    updatedAt: post.updatedAt,
+    authorName: post.author?.nickname ?? post.author?.username,
+  });
 }
 
-export function generateStaticParams() {
-  return [];
+export async function generateStaticParams() {
+  try {
+    const slugs = await getAllPostSlugs();
+    return slugs.map((slug) => ({ slug }));
+  } catch {
+    return [];
+  }
 }
 
 export default async function Page({ params }: Readonly<Props>) {
-  const paramValue = await params;
-  const slug = nextSlugToWpSlug(paramValue.slug);
-  const slugs = slug.split("/").filter((x) => Boolean(x));
+  const { slug } = await params;
+  const post = await getPostBySlug(slug);
 
-  const isPreview = slugs.includes("preview");
-  const { contentNode } = await fetchGraphQL<{ contentNode: ContentNode }>(
-    print(ContentInfoQuery),
-    {
-      slug: isPreview ? slugs[1] : decodeURIComponent(slugs[0]),
-      idType: isPreview ? "DATABASE_ID" : "URI",
-    }
+  if (!post) return notFound();
+
+  const seo = post.seo?.[0];
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "";
+  const canonicalUrl = seo?.canonicalURL ?? `${baseUrl}/${slug}`;
+
+  const structuredData = seo?.structuredData ?? {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: stripHtml(post.title),
+    ...(post.excerpt ? { description: post.excerpt } : {}),
+    url: canonicalUrl,
+    datePublished: post.published,
+    dateModified: post.updatedAt,
+    ...(post.author
+      ? {
+          author: {
+            "@type": "Person",
+            name: post.author.nickname ?? post.author.username,
+          },
+        }
+      : {}),
+    ...(seo?.metaImage?.url
+      ? { image: seo.metaImage.url }
+      : post.featuredImage?.url
+        ? { image: post.featuredImage.url }
+        : {}),
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      <PostTemplate post={post} />
+    </>
   );
-
-  if (!contentNode) return notFound();
-
-  switch (contentNode.contentTypeName) {
-    case constants.contentTypeNames.page: // "page":
-      return <PageTemplate node={contentNode} />;
-    case constants.contentTypeNames.post: // "post":
-      return <PostTemplate node={contentNode} />;
-    default:
-      return <p>{contentNode.contentTypeName} not implemented</p>;
-  }
 }

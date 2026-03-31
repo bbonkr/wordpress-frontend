@@ -1,89 +1,26 @@
-import { print } from "graphql/language/printer";
-
-import { ContentNode } from "@/gql/graphql";
-import { fetchGraphQL } from "@/utils/fetchGraphQL";
 import { draftMode } from "next/headers";
-import { NextResponse } from "next/server";
-import gql from "graphql-tag";
+import { redirect } from "next/navigation";
+import { getPostByDocumentId } from "@/lib/strapi/client";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const secret = searchParams.get("secret");
-  const id = searchParams.get("id");
+  const documentId = searchParams.get("documentId");
 
-  if (secret !== process.env.HEADLESS_SECRET || !id) {
+  if (secret !== process.env.HEADLESS_SECRET || !documentId) {
     return new Response("Invalid token", { status: 401 });
   }
 
-  //   const mutation = gql`
-  //   mutation LoginUser {
-  //     login( input: {
-  //       clientMutationId: "uniqueId",
-  //       username: "${process.env.WP_USER}",
-  //       password: "${process.env.WP_APP_PASS}"
-  //     } ) {
-  //       authToken
-  //       user {
-  //         id
-  //         name
-  //       }
-  //     }
-  //   }
-  // `;
+  const post = await getPostByDocumentId(documentId);
 
-  // const { login } = await fetchGraphQL<{ login: LoginPayload }>(
-  //   print(mutation)
-  // );
+  if (!post) {
+    return new Response("Invalid documentId", { status: 401 });
+  }
 
-  // const authToken = login.authToken;
-
-  // draftMode().enable();
   const draftModeValue = await draftMode();
   draftModeValue.enable();
 
-  const query = gql`
-    query GetContentNode($id: ID!) {
-      contentNode(id: $id, idType: DATABASE_ID) {
-        uri
-        status
-        databaseId
-      }
-    }
-  `;
-
-  const wpUser = process.env.WP_USER;
-  const wpAppPass = process.env.WP_APP_PASS;
-  let httpHeader = {};
-  let authToken = "";
-  if (wpUser && wpAppPass) {
-    authToken = Buffer.from(`${wpUser}:${wpAppPass}`).toString("base64");
-    httpHeader = { Authorization: `Basic ${authToken}` };
-  }
-
-  const { contentNode } = await fetchGraphQL<{ contentNode: ContentNode }>(
-    print(query),
-    {
-      id,
-    },
-    // { Authorization: `Bearer ${authToken}` }
-    { ...httpHeader }
-  );
-
-  if (!contentNode) {
-    return new Response("Invalid id", { status: 401 });
-  }
-
-  const response = NextResponse.redirect(
-    `${process.env.NEXT_PUBLIC_BASE_URL}${
-      contentNode.status === "draft"
-        ? `/preview/${contentNode.databaseId}`
-        : contentNode.uri
-    }`
-  );
-
-  response.headers.set("Set-Cookie", `wp_jwt=${authToken}; path=/;`);
-
-  return response;
+  redirect(`/preview/${documentId}`);
 }

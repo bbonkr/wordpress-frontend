@@ -44,3 +44,8 @@ certificates
 
 #generated
 gql
+# agent wokring directory
+.work/
+.playwright-mcp/
+.claude/tasks/
+.claude/projects/

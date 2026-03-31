@@ -1,42 +1,25 @@
 import type { Metadata } from "next";
-import { print } from "graphql/language/printer";
+import Link from "next/link";
 
-import { setSeoData } from "@/utils/seoData";
-
-import { fetchGraphQL } from "@/utils/fetchGraphQL";
-import { ContentNode, Page } from "@/gql/graphql";
-import { PageQuery } from "@/components/Templates/Page/PageQuery";
-import { SeoQuery } from "@/queries/general/SeoQuery";
-
-const notFoundPageWordPressId = 10580;
-
-export async function generateMetadata(): Promise<Metadata> {
-  const { contentNode } = await fetchGraphQL<{ contentNode: ContentNode }>(
-    print(SeoQuery),
-    { slug: notFoundPageWordPressId, idType: "DATABASE_ID" }
-  );
-
-  const metadata = setSeoData(contentNode);
-
+export function generateMetadata(): Metadata {
   return {
-    ...metadata,
+    title: `404 Not Found | ${process.env.NEXT_PUBLIC_SITE_TITLE ?? "Blog"}`,
+    robots: { index: false, follow: false },
     alternates: {
-      canonical: `${process.env.NEXT_PUBLIC_BASE_URL}/404-not-found/`,
+      canonical: `${process.env.NEXT_PUBLIC_BASE_URL}/404`,
     },
-  } as Metadata;
+  };
 }
 
-export default async function NotFound() {
-  const { page } = await fetchGraphQL<{ page: Page }>(print(PageQuery), {
-    id: notFoundPageWordPressId,
-  });
-
+export default function NotFound() {
   return (
     <div className="flex flex-col items-center justify-center flex-1 gap-3">
       <div className="text-2xl">
-        <div dangerouslySetInnerHTML={{ __html: page.content || " " }} />
+        <p>404 — Page Not Found</p>
       </div>
-      {/* <div>Search: </div> */}
+      <p>
+        <Link href="/">Navigate to post list page</Link>
+      </p>
     </div>
   );
 }

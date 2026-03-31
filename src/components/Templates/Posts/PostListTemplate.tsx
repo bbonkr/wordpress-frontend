@@ -1,76 +1,41 @@
-import { print } from "graphql/language/printer";
-
-import { Post, PostConnection } from "@/gql/graphql";
-import { fetchGraphQL } from "@/utils/fetchGraphQL";
-
-import { PostListQuery } from "./PostListQuery";
-import Link from "next/link";
 import ListOfPostTemplate from "../ListOfPosts/ListOfPostTemplate";
 import PaginationTemplate from "../Pagination/PaginationTemplate";
-import constants from "@/constants";
+import EmptyState from "@/components/EmptyState/EmptyState";
+import { getPosts } from "@/lib/strapi/client";
 
 import styles from "./PostListTemplate.module.css";
 
-interface PostListTemplate {
-  after?: string;
-  before?: string;
-  first?: string;
-  last?: string;
-  s?: string;
-  isLoading?: boolean;
+interface PostListTemplateProps {
+  page?: number;
 }
 
 export default async function PostListTemplate({
-  after,
-  before,
-  first,
-  last,
-  s,
-  isLoading,
-}: Readonly<PostListTemplate>) {
-  const firstValue =
-    !after && !before && !last ? `${constants.pagination.first}` : first;
-
-  const { posts } = await fetchGraphQL<{
-    posts: PostConnection;
-  }>(print(PostListQuery), {
-    after: after,
-    before: before,
-    first: firstValue ? parseInt(firstValue, 10) : undefined,
-    last: last ? parseInt(last, 10) : undefined,
-    s: s,
+  page = 1,
+}: Readonly<PostListTemplateProps>) {
+  const pageSize = 10;
+  const result = await getPosts({
+    page,
+    pageSize,
+    filters: { state: { $eq: "Published" } },
+    populate: ["author", "category", "featuredImage"],
+    sort: "published:desc",
   });
+
+  const posts = result.data;
+  const { pageCount } = result.meta.pagination;
 
   return (
     <div
       className={`flex flex-col flex-1 w-full justify-between ${styles.container}`}
     >
-      {posts?.nodes?.length > 0 ? (
-        <ListOfPostTemplate
-          route="/"
-          posts={posts.nodes}
-          isLoading={isLoading}
-        />
+      {posts.length > 0 ? (
+        <ListOfPostTemplate route="/" posts={posts} />
       ) : (
-        <div className="flex-1 flex flex-col justify-center items-center ">
-          <div className="flex flex-col gap-3 w-full">
-            <p>
-              There is no posts for the keyword <strong>{s}</strong>.
-            </p>
-            <p>You can find the article you want in the list.</p>
-            <p>
-              <Link href="/">Navigate to post list page</Link>
-            </p>
-          </div>
-        </div>
+        <EmptyState message="There are no posts." />
       )}
 
       <hr />
-      <PaginationTemplate
-        route="/"
-        pageInfo={posts.pageInfo}
-        isLoading={isLoading}
-      />
+      <PaginationTemplate basePath="/" page={page} pageCount={pageCount} />
     </div>
   );
 }

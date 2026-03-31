@@ -1,40 +1,47 @@
-import { ContentNode } from "@/gql/graphql";
+import type { StrapiSeo } from "@/lib/strapi/types";
 
-export const setSeoData = ({ seo, slug }: ContentNode) => {
+export const setSeoData = (seo: StrapiSeo | undefined, slug?: string) => {
   if (!seo) return {};
 
-  return {
-    metadataBase: new URL(`${process.env.NEXT_PUBLIC_BASE_URL}`),
-    title: seo.title || "",
-    description: seo.metaDesc || "",
-    robots: {
-      index: seo.metaRobotsNoindex === "index" ? true : false,
-      follow: seo.metaRobotsNofollow === "follow" ? true : false,
-    },
-    openGraph: {
-      title: seo.opengraphTitle || "",
-      description: seo.opengraphDescription || "",
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "";
+  const twitterMeta = seo.metaSocial?.find(
+    (s) => s.socialNetwork === "Twitter"
+  );
 
-      url: `${process.env.NEXT_PUBLIC_BASE_URL}/${slug}`,
-      siteName: seo.opengraphSiteName || "",
-      images: [
-        {
-          url: seo.opengraphImage?.sourceUrl || "",
-          width: seo.opengraphImage?.mediaDetails?.width || 1200,
-          height: seo.opengraphImage?.mediaDetails?.height || 630,
-          alt: seo.opengraphImage?.altText || "",
-        },
-      ],
+  return {
+    metadataBase: new URL(baseUrl),
+    title: seo.metaTitle || "",
+    description: seo.metaDescription || "",
+    robots: seo.metaRobots || undefined,
+    openGraph: {
+      title: seo.metaTitle || "",
+      description: seo.metaDescription || "",
+      url: slug ? `${baseUrl}/${slug}` : baseUrl,
+      images: seo.metaImage?.url
+        ? [
+            {
+              url: seo.metaImage.url,
+              width: seo.metaImage.width ?? 1200,
+              height: seo.metaImage.height ?? 630,
+              alt: seo.metaImage.alternativeText || "",
+            },
+          ]
+        : [],
       locale: "ko_KR",
-      type: seo.opengraphType ?? "website",
+      type: "article",
     },
     twitter: {
-      card: "summary_large_image",
-      title: seo.twitterTitle ?? seo.opengraphTitle ?? "",
-      description: seo.twitterDescription ?? seo.opengraphDescription ?? "",
-      images: seo.twitterImage
-        ? [seo.twitterImage?.sourceUrl ?? ""]
-        : [seo.opengraphImage?.sourceUrl ?? ""],
+      card: "summary_large_image" as const,
+      title: twitterMeta?.title ?? seo.metaTitle ?? "",
+      description: twitterMeta?.description ?? seo.metaDescription ?? "",
+      images: twitterMeta?.image?.url
+        ? [twitterMeta.image.url]
+        : seo.metaImage?.url
+        ? [seo.metaImage.url]
+        : [],
     },
+    ...(seo.canonicalURL
+      ? { alternates: { canonical: seo.canonicalURL } }
+      : {}),
   };
 };

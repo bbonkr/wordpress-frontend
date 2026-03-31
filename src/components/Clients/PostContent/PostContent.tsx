@@ -18,7 +18,7 @@ export const PostContent = ({ content, classNames }: Readonly<PostContent>) => {
     }
 
     return () => {};
-  }, []);
+  }, [content]);
 
   return (
     <div
