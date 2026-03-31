@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Suspense } from "react";
 import { marked } from "marked";
 import type { StrapiPost } from "@/lib/strapi/types";
+import { stripHtml } from "@/lib/metadata";
 import { PostContent } from "@/components/Clients/PostContent/PostContent";
 import styles from "./PostTemplate.module.css";
 
@@ -25,16 +26,6 @@ export default function PostTemplate({
     return html.replace(/(<h[1-6][^>]*>)\s*#{1,6}\s*/gi, "$1");
   }
 
-  // 제목(h1) 인라인 HTML sanitize: 이벤트 핸들러, script 태그, javascript: 제거
-  // small/strong/em/span/b/i 허용 인라인 태그 외 제거하지 않음
-  function sanitizeTitleHtml(html: string): string {
-    return html
-      .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "")
-      .replace(/\s+on\w+\s*=\s*(['"])[^'"]*\1/gi, "")
-      .replace(/\s+on\w+\s*=\s*[^\s>]*/gi, "")
-      .replace(/javascript\s*:/gi, "");
-  }
-
   const rawContent = hasMarkdown
     ? String(marked(post.markdownContent ?? ""))
     : (post.htmlContent ?? "");
@@ -46,11 +37,7 @@ export default function PostTemplate({
         {isLoading ? (
           <div className="placeholder animate-pulse">&nbsp;</div>
         ) : (
-          <span
-            dangerouslySetInnerHTML={{
-              __html: sanitizeTitleHtml(String(marked.parseInline(post.title ?? ""))),
-            }}
-          />
+          <span>{stripHtml(post.title ?? "")}</span>
         )}
       </h1>
 
