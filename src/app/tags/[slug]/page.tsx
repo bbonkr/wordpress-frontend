@@ -4,6 +4,8 @@ import { getTagBySlug } from "@/lib/strapi/client";
 import { buildPageMetadata, getSiteDefaults } from "@/lib/metadata";
 import { extractPageNumber, extractDecodedSlug } from "@/lib/searchParams";
 
+export const dynamic = "force-dynamic";
+
 type Props = {
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
