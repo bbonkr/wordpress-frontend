@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { marked } from "marked";
 import type { StrapiPost } from "@/lib/strapi/types";
 import EmptyState from "@/components/EmptyState/EmptyState";
+import { stripHtml } from "@/lib/metadata";
 
 interface ListOfPostTemplateProps {
   posts: StrapiPost[] | undefined;
@@ -23,11 +23,7 @@ export default function ListOfPostTemplate({
       {posts.map((post) => (
         <li key={post.slug} className="my-1 py-1">
           <Link href={`${route ?? "/"}${post.slug}`}>
-            <span
-              dangerouslySetInnerHTML={{
-                __html: String(marked.parseInline(post.title ?? "")),
-              }}
-            />
+            <span>{stripHtml(post.title ?? "")}</span>
           </Link>
         </li>
       ))}
