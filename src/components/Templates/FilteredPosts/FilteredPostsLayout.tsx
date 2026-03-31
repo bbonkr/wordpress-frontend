@@ -31,7 +31,7 @@ export default function FilteredPostsLayout({
       <hr className="my-3" />
 
       {posts.length > 0 ? (
-        <ListOfPostTemplate route={basePath} posts={posts} />
+        <ListOfPostTemplate route="/" posts={posts} />
       ) : (
         <EmptyState message={emptyMessage} />
       )}
