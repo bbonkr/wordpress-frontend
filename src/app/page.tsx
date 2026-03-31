@@ -1,28 +1,16 @@
+export const dynamic = "force-dynamic";
 import type { Metadata } from "next";
 import PostListTemplate from "@/components/Templates/Posts/PostListTemplate";
-import { fetchGraphQL } from "@/utils/fetchGraphQL";
-import { GeneralSettingsQuery } from "@/queries/general/GeneralSettingsQuery";
-import { GeneralSettings } from "@/gql/graphql";
-import { print } from "graphql/language/printer";
-import { setDefaultSeoData } from "@/utils/setDefaultSeoData";
+import { buildPageMetadata, getSiteDefaults } from "@/lib/metadata";
+import { extractPageNumber } from "@/lib/searchParams";
 
 type Props = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { generalSettings } = await fetchGraphQL<{
-    generalSettings: GeneralSettings;
-  }>(print(GeneralSettingsQuery), {});
-
-  const metadata = setDefaultSeoData(generalSettings, "");
-
-  return {
-    ...metadata,
-    alternates: {
-      canonical: `${process.env.NEXT_PUBLIC_BASE_URL}`,
-    },
-  } as Metadata;
+  const { siteTitle } = getSiteDefaults();
+  return buildPageMetadata(siteTitle, "");
 }
 
 export function generateStaticParams() {
@@ -30,16 +18,6 @@ export function generateStaticParams() {
 }
 
 export default async function Page({ searchParams }: Readonly<Props>) {
-  const searchParamsValue = await searchParams;
-  const { after, before, first, last, s } = searchParamsValue ?? {};
-
-  return (
-    <PostListTemplate
-      after={after?.toString()}
-      before={before?.toString()}
-      first={first?.toString()}
-      last={last?.toString()}
-      s={s?.toString()}
-    />
-  );
+  const page = await extractPageNumber(searchParams);
+  return <PostListTemplate page={page} />;
 }

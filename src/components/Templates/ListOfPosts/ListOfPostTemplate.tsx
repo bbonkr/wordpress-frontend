@@ -1,54 +1,36 @@
-import { Post } from "@/gql/graphql";
 import Link from "next/link";
+import { marked } from "marked";
+import type { StrapiPost } from "@/lib/strapi/types";
+import EmptyState from "@/components/EmptyState/EmptyState";
 
 interface ListOfPostTemplateProps {
-  posts: Post[] | undefined;
+  posts: StrapiPost[] | undefined;
   /**
    * route should end with '/'
    */
   route: string | undefined;
-  isLoading?: boolean;
 }
-export default async function ListOfPostTemplate({
+
+export default function ListOfPostTemplate({
   posts,
   route,
-  isLoading,
 }: Readonly<ListOfPostTemplateProps>) {
   if (!posts || posts.length === 0) {
-    return (
-      <div className="flex-1 flex flex-col justify-center items-center ">
-        <div className="flex flex-col gap-3 w-full">
-          <p>There is no posts.</p>
-          <p>You can find the posts you want in the list.</p>
-          <p>
-            <Link href="/">Navigate to post list page</Link>
-          </p>
-        </div>
-      </div>
-    );
+    return <EmptyState message="There is no posts." />;
   }
   return (
     <ul className="flex-1">
-      {isLoading
-        ? new Array(10).fill(0).map((v, i, arr) => (
-            <li key={v + i} className="placeholder animate-pulse my-1 py-1">
-              &nbsp;
-            </li>
-          ))
-        : posts.map((node) => {
-            return (
-              <li
-                key={node.slug}
-                className={`my-1 py-1 ${
-                  isLoading ? "placeholder animate-pulse" : ""
-                }`}
-              >
-                <Link href={`${route ?? "/"}${node.slug}`}>
-                  <span> {node.title}</span>
-                </Link>
-              </li>
-            );
-          })}
+      {posts.map((post) => (
+        <li key={post.slug} className="my-1 py-1">
+          <Link href={`${route ?? "/"}${post.slug}`}>
+            <span
+              dangerouslySetInnerHTML={{
+                __html: String(marked.parseInline(post.title ?? "")),
+              }}
+            />
+          </Link>
+        </li>
+      ))}
     </ul>
   );
 }

@@ -1,51 +1,23 @@
+export const dynamic = "force-dynamic";
 import type { Metadata } from "next";
 import CategoriesListTemplate from "@/components/Templates/Categories/CategoryListTemplate";
-import { fetchGraphQL } from "@/utils/fetchGraphQL";
-import { GeneralSettings } from "@/gql/graphql";
-import { GeneralSettingsQuery } from "@/queries/general/GeneralSettingsQuery";
-import { print } from "graphql/language/printer";
-import { setDefaultSeoData } from "@/utils/setDefaultSeoData";
-
-type Props = {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-};
+import { buildPageMetadata, getSiteDefaults } from "@/lib/metadata";
+import { extractPageNumber } from "@/lib/searchParams";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const title = "Categories";
-  const slug = "categories";
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "";
-
-  const { generalSettings } = await fetchGraphQL<{
-    generalSettings: GeneralSettings;
-  }>(print(GeneralSettingsQuery), {});
-
-  const metadata = setDefaultSeoData(generalSettings, slug, title, "");
-
-  return {
-    ...metadata,
-    alternates: {
-      canonical: `${baseUrl}/${slug}`,
-    },
-  } as Metadata;
+  const { siteTitle } = getSiteDefaults();
+  return buildPageMetadata(`Categories | ${siteTitle}`, "categories");
 }
 
 export function generateStaticParams() {
   return [];
 }
 
-export default async function CategoriesPage({
-  searchParams,
-}: Readonly<Props>) {
-  const searchParamsValue = await searchParams;
-  const { after, before, first, last, s } = searchParamsValue ?? {};
+type Props = {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
 
-  return (
-    <CategoriesListTemplate
-      after={after?.toString()}
-      before={before?.toString()}
-      first={first?.toString()}
-      last={last?.toString()}
-      s={s?.toString()}
-    />
-  );
+export default async function CategoriesPage({ searchParams }: Readonly<Props>) {
+  const page = await extractPageNumber(searchParams);
+  return <CategoriesListTemplate page={page} />;
 }

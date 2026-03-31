@@ -1,102 +1,56 @@
-import { CategoryConnection } from "@/gql/graphql";
-import { CategoriesListQuery } from "./CategoryListQuery";
-import { fetchGraphQL } from "@/utils/fetchGraphQL";
-import { print } from "graphql/language/printer";
-
 import Link from "next/link";
-import constants from "@/constants";
+import { getCategories } from "@/lib/strapi/client";
 import PaginationTemplate from "../Pagination/PaginationTemplate";
+import EmptyState from "@/components/EmptyState/EmptyState";
 import styles from "./CategoryListTemplate.module.css";
 
-interface PostListTemplate {
-  after?: string;
-  before?: string;
-  first?: string;
-  last?: string;
-  s?: string;
-  showPagination?: boolean;
-  isLoading?: boolean;
+interface CategoryListTemplateProps {
+  page?: number;
 }
 
 export default async function CategoriesListTemplate({
-  after,
-  before,
-  first,
-  last,
-  s,
-  showPagination,
-  isLoading,
-}: Readonly<PostListTemplate>) {
-  const firstValue =
-    !after && !before && !last ? `${constants.pagination.first}` : first;
-
-  const { categories } = await fetchGraphQL<{
-    categories: CategoryConnection;
-  }>(print(CategoriesListQuery), {
-    after: after,
-    before: before,
-    first: firstValue ? parseInt(firstValue, 10) : undefined,
-    last: last ? parseInt(last, 10) : undefined,
-    s: s,
+  page = 1,
+}: Readonly<CategoryListTemplateProps>) {
+  const result = await getCategories({
+    page,
+    pageSize: 10,
+    populate: ["parent", "categories"],
+    filters: {
+      $and: [
+        { parent: { $null: true } },
+        { posts: { state: { $eq: "Published" } } },
+      ],
+    },
   });
+  const categories = result.data;
+  const { pageCount } = result.meta.pagination;
 
   return (
     <div
       className={`w-full flex flex-col flex-1 justify-between entry-content ${styles.container}`}
     >
       <h1 className={styles.title}>
-        {isLoading ? (
-          <div className="placeholder animate-pulse">&nbsp;</div>
-        ) : (
-          <Link href={`/categories/`}>Categories</Link>
-        )}
+        <Link href="/categories/">Categories</Link>
       </h1>
 
       <hr className="my-3" />
 
-      {categories?.nodes?.length > 0 ? (
+      {categories.length > 0 ? (
         <ul className="flex-1">
-          {isLoading
-            ? new Array(10).fill(0).map((v, i, arr) => (
-                <li
-                  key={(v + i).toString()}
-                  className="placeholder animate-pulse my-1 py-1"
-                >
-                  &nbsp;
-                </li>
-              ))
-            : categories?.nodes.map((node) => {
-                return (
-                  <li key={node.slug} className="my-1 py-1">
-                    <Link href={`/categories/${node.slug}`}>
-                      <span>{node?.name}</span>
-                    </Link>
-                  </li>
-                );
-              })}
+          {categories.map((category) => (
+            <li key={category.slug} className="my-1 py-1">
+              <Link href={`/categories/${category.slug}`}>
+                <span>{category.name}</span>
+              </Link>
+            </li>
+          ))}
         </ul>
       ) : (
-        <div className="flex-1 flex flex-col justify-center items-center ">
-          <div className="flex flex-col gap-3 w-full">
-            <p>There is no category.</p>
-            <p>You can find the article you want in the list.</p>
-            <p>
-              <Link href="/">Navigate to post list page</Link>
-            </p>
-          </div>
-        </div>
+        <EmptyState message="There is no category." />
       )}
 
-      {showPagination && (
-        <>
-          <hr />
-          <PaginationTemplate
-            route="/categories/"
-            pageInfo={categories.pageInfo}
-            isLoading={isLoading}
-          />
-        </>
-      )}
+      <hr />
+      <PaginationTemplate basePath="/categories/" page={page} pageCount={pageCount} />
     </div>
   );
 }

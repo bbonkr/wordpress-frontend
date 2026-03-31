@@ -1,88 +1,51 @@
-import { print } from "graphql/language/printer";
-
-import { Category } from "@/gql/graphql";
-import { fetchGraphQL } from "@/utils/fetchGraphQL";
-
-import { CategoryPostsQuery } from "./CategoryPostsQuery";
 import Link from "next/link";
-import ListOfPostTemplate from "../ListOfPosts/ListOfPostTemplate";
-import PaginationTemplate from "../Pagination/PaginationTemplate";
-import constants from "@/constants";
+import { getCategoryBySlug, getPosts } from "@/lib/strapi/client";
+import FilteredPostsLayout from "../FilteredPosts/FilteredPostsLayout";
 import styles from "./CategoryPostsTemplate.module.css";
 
-interface PostListTemplate {
+interface CategoryPostsTemplateProps {
   categorySlug?: string;
-  after?: string;
-  before?: string;
-  first?: string;
-  last?: string;
-  s?: string;
-  isLoading?: boolean;
+  page?: number;
 }
 
 export default async function CategoryPostsTemplate({
   categorySlug,
-  after,
-  before,
-  first,
-  last,
-  s,
-  isLoading,
-}: Readonly<PostListTemplate>) {
-  const firstValue =
-    !after && !before && !last ? `${constants.pagination.first}` : first;
+  page = 1,
+}: Readonly<CategoryPostsTemplateProps>) {
+  if (!categorySlug) return null;
 
-  const { category } = await fetchGraphQL<{
-    category: Category;
-  }>(print(CategoryPostsQuery), {
-    id: categorySlug ?? "",
-    after: after,
-    before: before,
-    first: firstValue ? parseInt(firstValue, 10) : undefined,
-    last: last ? parseInt(last, 10) : undefined,
-    s: s,
-  });
+  const pageSize = 10;
+
+  const [category, postsResult] = await Promise.all([
+    getCategoryBySlug(categorySlug),
+    getPosts({
+      page,
+      pageSize,
+      filters: {
+        category: { slug: { $eq: categorySlug } },
+        state: { $eq: "Published" },
+      },
+      populate: ["category", "author", "featuredImage"],
+      sort: "published:desc",
+    }),
+  ]);
+
+  const posts = postsResult.data;
+  const { pageCount } = postsResult.meta.pagination;
 
   return (
-    <div
-      className={`w-full flex flex-col flex-1 justify-between entry-content ${styles.container}`}
-    >
-      <h1 className={styles.title}>
-        {isLoading ? (
-          <div className="placeholder animate-pulse">&nbsp;</div>
-        ) : (
-          <Link href={`/categories/${category.slug}`}>
-            Posts in the <strong>{category.name}</strong> category
-          </Link>
-        )}
-      </h1>
-
-      <hr className="my-3" />
-
-      {(category?.posts?.nodes?.length ?? 0) > 0 ? (
-        <ListOfPostTemplate
-          route="/"
-          posts={category?.posts?.nodes}
-          isLoading={isLoading}
-        />
-      ) : (
-        <div className="flex-1 flex flex-col justify-center items-center ">
-          <div className="flex flex-col gap-3 w-full">
-            <p>There is no post in this category.</p>
-            <p>You can find the article you want in the list.</p>
-            <p>
-              <Link href="/">Navigate to post list page</Link>
-            </p>
-          </div>
-        </div>
-      )}
-
-      <hr />
-      <PaginationTemplate
-        route={`/categories/${categorySlug}/`}
-        pageInfo={category?.posts?.pageInfo}
-        isLoading={isLoading}
-      />
-    </div>
+    <FilteredPostsLayout
+      title={
+        <Link href={`/categories/${categorySlug}`}>
+          Posts in the <strong>{category?.name ?? categorySlug}</strong> category
+        </Link>
+      }
+      posts={posts}
+      page={page}
+      pageCount={pageCount}
+      basePath={`/categories/${categorySlug}/`}
+      emptyMessage="There is no post in this category."
+      containerClassName={styles.container}
+    />
   );
 }

@@ -1,4 +1,5 @@
 import { draftMode } from "next/headers";
+import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 import Navigation from "@/components/Globals/Navigation/Navigation";
@@ -10,6 +11,11 @@ import { Analytics } from "@vercel/analytics/next";
 
 import "@/app/globals.css";
 import "@/app/prism.css";
+
+export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000"),
+  robots: { index: true, follow: true },
+};
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -34,7 +40,7 @@ export default async function RootLayout({
   const clarityId = process.env.CLARITY_ID ?? "";
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="ko" suppressHydrationWarning>
       <head>
         {gaId && (
           <link rel="preconnect" href="https://www.googletagmanager.com" />
@@ -49,7 +55,7 @@ export default async function RootLayout({
                 rel="apple-touch-icon"
                 sizes={`${s}x${s}`}
                 type="image/png"
-                href={`${mediaUrl}/wordpress/bbon-icon-${s}.png`}
+                href={`${mediaUrl}/strapi/bbon-icon-${s}.png`}
               />
             ))}
             {iconSizes.map((s) => (
@@ -58,7 +64,7 @@ export default async function RootLayout({
                 rel="icon"
                 sizes={`${s}x${s}`}
                 type="image/png"
-                href={`${mediaUrl}/wordpress/bbon-icon-${s}.png`}
+                href={`${mediaUrl}/strapi/bbon-icon-${s}.png`}
               />
             ))}
           </>
