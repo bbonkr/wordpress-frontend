@@ -10,7 +10,14 @@ export function getSiteDefaults(): { baseUrl: string; siteTitle: string } {
 
 /** HTML 태그를 제거하고 순수 텍스트만 반환 */
 export function stripHtml(html: string): string {
-  return html.replace(/<[^>]+>/g, "").trim();
+  // 중첩 태그 우회 공격 방지: 변화가 없을 때까지 반복 치환
+  let result = html;
+  let previous: string;
+  do {
+    previous = result;
+    result = result.replace(/<[^>]+>/g, "");
+  } while (result !== previous);
+  return result.trim();
 }
 
 export function buildPageMetadata(
