@@ -1,4 +1,5 @@
-export async function GET(request: Request) {
+export const dynamic = 'force-dynamic';
+export async function GET() {
   
     const value = process.env.ADSENSE_ADSTXT;
  
